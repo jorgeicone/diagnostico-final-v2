@@ -866,19 +866,6 @@
     </style>
 </head>
 <body>
-    
-<!-- Formulario Inicial -->
-<div id="userForm" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 68, 69, 0.95); z-index: 10000; display: flex; align-items: center; justify-content: center;">
-  <div style="background: white; padding: 40px; border-radius: 20px; max-width: 500px; width: 90%;">
-    <h2 style="color: #054445; text-align: center; margin-bottom: 30px;">📋 Datos del Participante</h2>
-    <input type="text" id="userNombre" placeholder="Nombre y Apellidos *" required style="width: 100%; padding: 15px; margin-bottom: 15px; border: 2px solid #75e6da; border-radius: 10px; font-size: 16px;">
-    <input type="email" id="userCorreo" placeholder="Correo Electrónico *" required style="width: 100%; padding: 15px; margin-bottom: 15px; border: 2px solid #75e6da; border-radius: 10px; font-size: 16px;">
-    <input type="tel" id="userCelular" placeholder="Número de Celular *" required style="width: 100%; padding: 15px; margin-bottom: 15px; border: 2px solid #75e6da; border-radius: 10px; font-size: 16px;">
-    <input type="text" id="userEmpresa" placeholder="Empresa *" required style="width: 100%; padding: 15px; margin-bottom: 15px; border: 2px solid #75e6da; border-radius: 10px; font-size: 16px;">
-    <input type="text" id="userCargo" placeholder="Cargo *" required style="width: 100%; padding: 15px; margin-bottom: 25px; border: 2px solid #75e6da; border-radius: 10px; font-size: 16px;">
-    <button onclick="iniciarDiagnosticoApp()" style="width: 100%; padding: 18px; background: linear-gradient(135deg, #75e6da 0%, #5bc0be 100%); color: #054445; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer;">🚀 Iniciar Diagnóstico</button>
-  </div>
-</div>
     <!-- Neural Network Background -->
     <div class="neural-background">
         <canvas class="neural-canvas" id="neuralCanvas"></canvas>
@@ -893,46 +880,7 @@
         const { useState } = React;
 
         // Generate particles on load
-        window.addEventListene
-            // URL de Google Sheets
-const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycby7msU2IL_nBKlGcGUeHeX41zvSv6axk4o0-WPw0mo_1qTQ1qVbUBXaqg42ns_MZZFO/exec';
-let userData = {};
-
-function iniciarDiagnosticoApp() {
-  const nombre = document.getElementById('userNombre').value.trim();
-  const correo = document.getElementById('userCorreo').value.trim();
-  const celular = document.getElementById('userCelular').value.trim();
-  const empresa = document.getElementById('userEmpresa').value.trim();
-  const cargo = document.getElementById('userCargo').value.trim();
-  
-  if(!nombre || !correo || !celular || !empresa || !cargo) {
-    alert('⚠️ Por favor completa todos los campos obligatorios');
-    return;
-  }
-  
-  userData = {nombre, correo, celular, empresa, cargo};
-  document.getElementById('userForm').style.display = 'none';
-}
-
-function enviarAGoogleSheets(totalScore, category, answers) {
-  const datos = {
-    ...userData,
-    puntajeTotal: totalScore,
-    nivel: category
-  };
-  
-  for(let i = 1; i <= 60; i++) {
-    datos['pregunta' + i] = answers[i] || 0;
-  }
-  
-  fetch(GOOGLE_SHEETS_URL, {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify(datos)
-  }).catch(e => console.log('Datos enviados'));
-}
-r('DOMContentLoaded', () => {
+        window.addEventListener('DOMContentLoaded', () => {
             const particlesContainer = document.getElementById('particles');
             if (particlesContainer) {
                 for (let i = 0; i < 40; i++) {
