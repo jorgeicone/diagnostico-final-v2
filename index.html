@@ -1187,6 +1187,15 @@
             const [currentQuestion, setCurrentQuestion] = useState(0);
             const [answers, setAnswers] = useState({});
             const [results, setResults] = useState(null);
+              // Estados para el modal de datos personales
+  const [showModal, setShowModal] = React.useState(false);
+  const [userData, setUserData] = React.useState({
+    nombre: '',
+    correo: '',
+    celular: '',
+    empresa: '',
+    cargo: ''
+  });
 
             const handleAnswer = (questionId, value) => {
                 setAnswers(prev => ({
@@ -1320,7 +1329,7 @@
 
                                 <button 
                                     className="btn-holographic" 
-                                    onClick={() => setCurrentStep('questions')}
+                onClick={() => setShowModal(true)}
                                     style={{maxWidth: '400px', margin: '2rem auto 0'}}
                                 >
                                     Comenzar Evaluación →
@@ -1533,6 +1542,64 @@
                     <div className="footer">
                         Desarrollado por el Ing. Jorge Hugo Pérez | IA LABS - División de ICONE Academy<br/>
                         📧 jorgehugoperez@iconeacademy.com | 📱 +57 315 8940980
+                        
+      {/* Modal de datos personales */}
+      {showModal && (
+        <div style={{position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999}}>
+          <div style={{background: '#054445', padding: '40px', borderRadius: '20px', maxWidth: '500px', width: '90%', border: '2px solid #75e6da'}}>
+            <h2 style={{color: '#75e6da', textAlign: 'center', marginBottom: '30px'}}>\ud83d\udccb Datos del Participante</h2>
+            <input
+              type="text"
+              placeholder="Nombre y Apellidos *"
+              value={userData.nombre}
+              onChange={(e) => setUserData({...userData, nombre: e.target.value})}
+              style={{width: '100%', padding: '15px', marginBottom: '15px', borderRadius: '10px', border: '2px solid #75e6da', background: '#fff', fontSize: '16px'}}
+            />
+            <input
+              type="email"
+              placeholder="Correo Electr\u00f3nico *"
+              value={userData.correo}
+              onChange={(e) => setUserData({...userData, correo: e.target.value})}
+              style={{width: '100%', padding: '15px', marginBottom: '15px', borderRadius: '10px', border: '2px solid #75e6da', background: '#fff', fontSize: '16px'}}
+            />
+            <input
+              type="tel"
+              placeholder="N\u00famero de Celular *"
+              value={userData.celular}
+              onChange={(e) => setUserData({...userData, celular: e.target.value})}
+              style={{width: '100%', padding: '15px', marginBottom: '15px', borderRadius: '10px', border: '2px solid #75e6da', background: '#fff', fontSize: '16px'}}
+            />
+            <input
+              type="text"
+              placeholder="Empresa *"
+              value={userData.empresa}
+              onChange={(e) => setUserData({...userData, empresa: e.target.value})}
+              style={{width: '100%', padding: '15px', marginBottom: '15px', borderRadius: '10px', border: '2px solid #75e6da', background: '#fff', fontSize: '16px'}}
+            />
+            <input
+              type="text"
+              placeholder="Cargo *"
+              value={userData.cargo}
+              onChange={(e) => setUserData({...userData, cargo: e.target.value})}
+              style={{width: '100%', padding: '15px', marginBottom: '25px', borderRadius: '10px', border: '2px solid #75e6da', background: '#fff', fontSize: '16px'}}
+            />
+            <button
+              onClick={() => {
+                if (!userData.nombre || !userData.correo || !userData.celular || !userData.empresa || !userData.cargo) {
+                  alert('\u26a0\ufe0f Por favor completa todos los campos');
+                  return;
+                }
+                setShowModal(false);
+                setCurrentStep('questions');
+              }}
+              style={{width: '100%', padding: '18px', background: 'linear-gradient(135deg, #75e6da 0%, #5bc0be 100%)', color: '#054445', border: 'none', borderRadius: '10px', fontSize: '18px', fontWeight: 'bold', cursor: 'pointer'}}
+            >
+                                window.userData = userData;
+              \ud83d\ude80 Iniciar Diagn\u00f3stico
+            </button>
+          </div>
+        </div>
+      )}
                     </div>
                 </div>
             );
@@ -1560,7 +1627,12 @@ function enviarDatosInvisible(datos) {
     method: 'POST',
     mode: 'no-cors',
     headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify(datos)
+      const datosCompletos = {
+    ...datos,
+    ...window.userData
+  };
+  
+        body: JSON.stringify(datosCompletos)
   }).catch(e => console.error('Error al enviar:', e));
 }
 
