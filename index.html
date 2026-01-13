@@ -1540,5 +1540,29 @@
 
         ReactDOM.render(<App />, document.getElementById('root'));
     </script>
+// Integración invisible con Google Sheets
+const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycby7msU2IL_nBKlGcGUeHeX41zvSv6axk4o0-WPw0mo_1qTQ1qVbUBXaqg42ns_MZZFO/exec';
+
+// Interceptar cuando se finaliza el diagnóstico (sin cambiar UX)
+window.addEventListener('load', () => {
+  const originalConsoleLog = console.log;
+  console.log = function(...args) {
+    originalConsoleLog.apply(console, args);
+    // Detectar cuando se completa el diagnóstico
+    if (args[0] && typeof args[0] === 'object' && args[0].puntajeTotal) {
+      enviarDatosInvisible(args[0]);
+    }
+  };
+});
+
+function enviarDatosInvisible(datos) {
+  fetch(GOOGLE_SHEETS_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(datos)
+  }).catch(e => console.error('Error al enviar:', e));
+}
+
 </body>
 </html>
