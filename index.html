@@ -1,1641 +1,805 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#050810">
-    <title>Diagnóstico IA 360° | IA LABS - ICONE Academy</title>
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --primary-dark: #05445e;
-            --primary: #147e93;
-            --primary-medium: #0292b7;
-            --primary-light: #1ac8db;
-            --accent-light: #75e6da;
-            --accent-lighter: #99dfec;
-            --white: #ebfdff;
-            --white-pure: #ffffff;
-            --gray: #616161;
-            --gray-light: #9e9e9e;
-            --gray-dark: #8c756a;
-            --yellow: #f9c911;
-            --green: #359830;
-            --bg-dark: #0a0e1a;
-            --bg-darker: #050810;
-            --gradient-primary: linear-gradient(135deg, #147e93 0%, #1ac8db 100%);
-        }
-
-        body {
-            font-family: 'Montserrat', sans-serif;
-            background: var(--bg-darker);
-            color: var(--white);
-            overflow-x: hidden;
-            position: relative;
-            min-height: 100vh;
-            -webkit-tap-highlight-color: transparent;
-            -webkit-touch-callout: none;
-            -webkit-text-size-adjust: 100%;
-        }
-
-        /* Neural Network Background */
-        .neural-background {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            overflow: hidden;
-            background: radial-gradient(ellipse at top, #0a1628 0%, var(--bg-darker) 100%);
-        }
-
-        .neural-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0.15;
-        }
-
-        .neural-background::before {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: 
-                radial-gradient(circle at 15% 20%, rgba(20, 126, 147, 0.08) 0%, transparent 40%),
-                radial-gradient(circle at 85% 80%, rgba(26, 200, 219, 0.06) 0%, transparent 40%),
-                radial-gradient(circle at 50% 50%, rgba(5, 68, 94, 0.1) 0%, transparent 50%);
-            animation: pulse-neural 8s ease-in-out infinite;
-        }
-
-        @keyframes pulse-neural {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.6; }
-        }
-
-        /* Particles */
-        .particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            pointer-events: none;
-        }
-
-        .particle {
-            position: absolute;
-            width: 3px;
-            height: 3px;
-            background: var(--accent-light);
-            border-radius: 50%;
-            opacity: 0.4;
-            animation: float-particle 15s infinite ease-in-out;
-            box-shadow: 0 0 8px rgba(26, 200, 219, 0.6);
-        }
-
-        @keyframes float-particle {
-            0%, 100% { 
-                transform: translate(0, 0) scale(1);
-                opacity: 0.4;
-            }
-            25% { 
-                transform: translate(80px, -80px) scale(1.3);
-                opacity: 0.6;
-            }
-            50% { 
-                transform: translate(-40px, 40px) scale(0.7);
-                opacity: 0.3;
-            }
-            75% { 
-                transform: translate(120px, 80px) scale(1.1);
-                opacity: 0.5;
-            }
-        }
-
-        /* Container */
-        .app-container {
-            position: relative;
-            z-index: 2;
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 1.5rem 1rem;
-            min-height: 100vh;
-        }
-
-        /* Glass Card */
-        .glass-card {
-            background: rgba(10, 14, 26, 0.85);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
-            border: 1px solid rgba(26, 200, 219, 0.2);
-            border-radius: 24px;
-            box-shadow: 
-                0 8px 32px rgba(0, 0, 0, 0.6),
-                inset 0 1px 0 rgba(26, 200, 219, 0.1);
-            position: relative;
-            overflow: hidden;
-            animation: fadeInUp 0.8s ease-out;
-        }
-
-        .glass-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, 
-                transparent, 
-                rgba(26, 200, 219, 0.1), 
-                transparent);
-            animation: shimmer 4s infinite;
-        }
-
-        @keyframes shimmer {
-            0% { left: -100%; }
-            100% { left: 200%; }
-        }
-
-        /* Header */
-        .header {
-            text-align: center;
-            margin-bottom: 2rem;
-            padding: 1rem;
-            animation: fadeInDown 1s ease-out;
-        }
-
-        .logo-container {
-            width: 100px;
-            height: 100px;
-            margin: 0 auto 1.5rem;
-            position: relative;
-            animation: float 3s ease-in-out infinite;
-        }
-
-        .logo-3d {
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #1ac8db 0%, #147e93 100%);
-            border-radius: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3rem;
-            box-shadow: 
-                0 20px 60px rgba(26, 200, 219, 0.4),
-                inset 0 -2px 10px rgba(0, 0, 0, 0.3),
-                inset 0 2px 10px rgba(255, 255, 255, 0.1);
-            transform: perspective(1000px) rotateX(5deg);
-            transition: transform 0.3s ease;
-        }
-
-        .logo-3d:hover {
-            transform: perspective(1000px) rotateX(0deg) scale(1.05);
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-15px); }
-        }
-
-        .main-title {
-            font-size: clamp(1.8rem, 5vw, 3.5rem);
-            font-weight: 900;
-            background: linear-gradient(135deg, #fff 0%, #75e6da 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 0.8rem;
-            letter-spacing: -0.02em;
-            text-shadow: 0 0 40px rgba(117, 230, 218, 0.3);
-        }
-
-        .subtitle {
-            font-size: clamp(0.9rem, 2vw, 1.2rem);
-            color: var(--accent-lighter);
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-        }
-
-        .creator-tag {
-            font-size: clamp(0.75rem, 1.5vw, 0.85rem);
-            color: rgba(117, 230, 218, 0.6);
-            font-weight: 400;
-            margin-top: 0.8rem;
-        }
-
-        /* Progress Circle */
-        .progress-container {
-            text-align: center;
-            margin-bottom: 2rem;
-            padding: 1rem;
-        }
-
-        .progress-ring {
-            position: relative;
-            width: clamp(140px, 30vw, 180px);
-            height: clamp(140px, 30vw, 180px);
-            margin: 0 auto 1rem;
-        }
-
-        .progress-ring svg {
-            transform: rotate(-90deg);
-            filter: drop-shadow(0 0 20px rgba(26, 200, 219, 0.4));
-        }
-
-        .progress-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: clamp(2rem, 5vw, 2.5rem);
-            font-weight: 800;
-            color: var(--white);
-        }
-
-        .progress-label {
-            font-size: clamp(0.75rem, 2vw, 0.9rem);
-            color: var(--accent-lighter);
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-        }
-
-        /* Question Card */
-        .question-card {
-            padding: clamp(1.5rem, 4vw, 2.5rem);
-            animation: slideInRight 0.5s ease-out;
-        }
-
-        .question-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: rgba(26, 200, 219, 0.15);
-            border: 1px solid rgba(26, 200, 219, 0.3);
-            padding: 0.5rem 1.2rem;
-            border-radius: 50px;
-            font-size: clamp(0.7rem, 1.5vw, 0.85rem);
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-bottom: 1.5rem;
-            backdrop-filter: blur(10px);
-        }
-
-        .question-title {
-            font-size: clamp(1.2rem, 3vw, 2rem);
-            font-weight: 800;
-            color: var(--white);
-            margin-bottom: 0.8rem;
-            line-height: 1.3;
-        }
-
-        .question-subtitle {
-            font-size: clamp(0.85rem, 2vw, 1.1rem);
-            color: var(--accent-lighter);
-            margin-bottom: 2rem;
-            line-height: 1.6;
-        }
-
-        /* Options */
-        .options-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .option-modern {
-            background: rgba(10, 20, 35, 0.6);
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(26, 200, 219, 0.15);
-            border-radius: 16px;
-            padding: 1.2rem;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            min-height: 80px;
-            -webkit-tap-highlight-color: transparent;
-            touch-action: manipulation;
-        }
-
-        .option-modern::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            background: radial-gradient(circle, rgba(26, 200, 219, 0.2) 0%, transparent 70%);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            transition: width 0.5s ease, height 0.5s ease;
-        }
-
-        .option-modern:hover {
-            transform: translateX(4px);
-            border-color: rgba(26, 200, 219, 0.5);
-            box-shadow: 
-                0 8px 24px rgba(26, 200, 219, 0.2),
-                inset 0 1px 0 rgba(255, 255, 255, 0.05);
-        }
-
-        .option-modern:active {
-            transform: scale(0.98);
-        }
-
-        .option-modern:hover::before {
-            width: 400px;
-            height: 400px;
-        }
-
-        .option-modern.selected {
-            background: linear-gradient(135deg, rgba(26, 200, 219, 0.25) 0%, rgba(20, 126, 147, 0.25) 100%);
-            border-color: var(--primary-light);
-            box-shadow: 
-                0 0 30px rgba(26, 200, 219, 0.4),
-                inset 0 1px 0 rgba(255, 255, 255, 0.2);
-        }
-
-        .option-icon {
-            font-size: clamp(1.8rem, 4vw, 2.5rem);
-            min-width: clamp(40px, 8vw, 50px);
-            text-align: center;
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-        }
-
-        .option-content {
-            flex: 1;
-        }
-
-        .option-label {
-            font-size: clamp(1rem, 2vw, 1.2rem);
-            font-weight: 700;
-            color: var(--white);
-            margin-bottom: 0.3rem;
-            display: block;
-        }
-
-        .option-text {
-            font-size: clamp(0.8rem, 1.5vw, 0.95rem);
-            color: var(--accent-lighter);
-            line-height: 1.5;
-        }
-
-        .option-points {
-            display: none; /* Oculto para evitar sesgo */
-        }
-
-        .option-check {
-            width: 28px;
-            height: 28px;
-            min-width: 28px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-        }
-
-        .option-modern.selected .option-check {
-            background: var(--primary-light);
-            border-color: var(--primary-light);
-            box-shadow: 0 0 15px rgba(26, 200, 219, 0.6);
-        }
-
-        .option-modern.selected .option-check::after {
-            content: '✓';
-            color: var(--bg-darker);
-            font-weight: 900;
-            font-size: 1rem;
-        }
-
-        /* Buttons */
-        .btn-holographic {
-            position: relative;
-            padding: clamp(1rem, 2vw, 1.2rem) clamp(1.5rem, 3vw, 2.5rem);
-            border: none;
-            border-radius: 12px;
-            font-size: clamp(0.9rem, 2vw, 1.1rem);
-            font-weight: 700;
-            font-family: 'Montserrat', sans-serif;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            overflow: hidden;
-            transition: all 0.4s ease;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            color: var(--white);
-            box-shadow: 
-                0 8px 32px rgba(26, 200, 219, 0.4),
-                inset 0 1px 0 rgba(255, 255, 255, 0.2);
-            width: 100%;
-            min-height: 56px;
-            -webkit-tap-highlight-color: transparent;
-            touch-action: manipulation;
-        }
-
-        .btn-holographic::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            transition: width 0.6s ease, height 0.6s ease;
-        }
-
-        .btn-holographic:hover:not(:disabled) {
-            transform: translateY(-3px);
-            box-shadow: 
-                0 12px 40px rgba(26, 200, 219, 0.6),
-                inset 0 1px 0 rgba(255, 255, 255, 0.3);
-        }
-
-        .btn-holographic:active:not(:disabled) {
-            transform: scale(0.98);
-        }
-
-        .btn-holographic:hover:not(:disabled)::before {
-            width: 400px;
-            height: 400px;
-        }
-
-        .btn-holographic:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
-
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.08);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
-        }
-
-        .btn-secondary:hover:not(:disabled) {
-            background: rgba(255, 255, 255, 0.12);
-            border-color: rgba(255, 255, 255, 0.4);
-        }
-
-        .button-group {
-            display: flex;
-            gap: 1rem;
-            margin-top: 2rem;
-            flex-direction: column;
-        }
-
-        @media (min-width: 640px) {
-            .button-group {
-                flex-direction: row;
-            }
-            
-            .button-group .btn-holographic {
-                width: auto;
-                flex: 1;
-            }
-        }
-
-        /* Welcome Screen */
-        .welcome-screen {
-            text-align: center;
-            padding: clamp(1.5rem, 3vw, 2rem);
-        }
-
-        .welcome-visual {
-            width: clamp(150px, 30vw, 200px);
-            height: clamp(150px, 30vw, 200px);
-            margin: 0 auto 2rem;
-            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: clamp(4rem, 10vw, 6rem);
-            box-shadow: 
-                0 20px 60px rgba(26, 200, 219, 0.4),
-                inset 0 -5px 20px rgba(0, 0, 0, 0.3),
-                inset 0 5px 20px rgba(255, 255, 255, 0.1);
-            animation: pulse-glow 3s ease-in-out infinite;
-        }
-
-        @keyframes pulse-glow {
-            0%, 100% { 
-                box-shadow: 
-                    0 20px 60px rgba(26, 200, 219, 0.4),
-                    inset 0 -5px 20px rgba(0, 0, 0, 0.3),
-                    inset 0 5px 20px rgba(255, 255, 255, 0.1);
-            }
-            50% { 
-                box-shadow: 
-                    0 20px 80px rgba(26, 200, 219, 0.6),
-                    0 0 60px rgba(26, 200, 219, 0.4),
-                    inset 0 -5px 20px rgba(0, 0, 0, 0.3),
-                    inset 0 5px 20px rgba(255, 255, 255, 0.1);
-            }
-        }
-
-        .welcome-title {
-            font-size: clamp(1.5rem, 4vw, 2.5rem);
-            font-weight: 900;
-            color: var(--white);
-            margin-bottom: 1rem;
-        }
-
-        .welcome-text {
-            font-size: clamp(0.9rem, 2vw, 1.1rem);
-            color: var(--accent-lighter);
-            margin-bottom: 2rem;
-            line-height: 1.8;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .feature-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 1rem;
-            margin: 2rem 0;
-        }
-
-        .feature-card {
-            background: rgba(10, 20, 35, 0.6);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(26, 200, 219, 0.2);
-            border-radius: 16px;
-            padding: 1.5rem 1rem;
-            text-align: center;
-            transition: all 0.4s ease;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 32px rgba(26, 200, 219, 0.3);
-            border-color: rgba(26, 200, 219, 0.4);
-        }
-
-        .feature-icon {
-            font-size: clamp(2.5rem, 6vw, 3.5rem);
-            margin-bottom: 0.8rem;
-            filter: drop-shadow(0 4px 12px rgba(26, 200, 219, 0.4));
-        }
-
-        .feature-title {
-            font-size: clamp(0.9rem, 2vw, 1.1rem);
-            font-weight: 700;
-            color: var(--white);
-            margin-bottom: 0.5rem;
-        }
-
-        .feature-desc {
-            font-size: clamp(0.75rem, 1.5vw, 0.9rem);
-            color: var(--accent-lighter);
-            line-height: 1.5;
-        }
-
-        /* Results Screen */
-        .results-screen {
-            padding: clamp(1.5rem, 3vw, 2rem);
-        }
-
-        .score-section {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-
-        .score-circle {
-            width: clamp(200px, 40vw, 280px);
-            height: clamp(200px, 40vw, 280px);
-            margin: 0 auto 2rem;
-            position: relative;
-        }
-
-        .score-circle svg {
-            transform: rotate(-90deg);
-            filter: drop-shadow(0 0 30px rgba(26, 200, 219, 0.5));
-        }
-
-        .score-value-large {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: clamp(3.5rem, 10vw, 5rem);
-            font-weight: 900;
-            background: linear-gradient(135deg, #fff 0%, var(--primary-light) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .score-label {
-            position: absolute;
-            bottom: 25%;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: clamp(0.75rem, 2vw, 0.9rem);
-            color: var(--accent-lighter);
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            white-space: nowrap;
-        }
-
-        .level-badge {
-            display: inline-block;
-            padding: clamp(0.6rem, 2vw, 0.8rem) clamp(1.5rem, 3vw, 2rem);
-            background: linear-gradient(135deg, var(--yellow) 0%, #ffd54f 100%);
-            color: var(--primary-dark);
-            border-radius: 50px;
-            font-size: clamp(1rem, 2.5vw, 1.3rem);
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            box-shadow: 0 8px 32px rgba(249, 201, 17, 0.4);
-            margin-bottom: 2rem;
-        }
-
-        .urgency-banner {
-            background: linear-gradient(135deg, rgba(255, 107, 53, 0.2) 0%, rgba(249, 201, 17, 0.2) 100%);
-            border: 2px solid rgba(249, 201, 17, 0.5);
-            border-radius: 16px;
-            padding: clamp(1.5rem, 3vw, 2rem);
-            margin: 2rem 0;
-            text-align: center;
-        }
-
-        .urgency-title {
-            font-size: clamp(1.2rem, 3vw, 1.8rem);
-            font-weight: 800;
-            color: var(--white);
-            margin-bottom: 1rem;
-        }
-
-        .urgency-score {
-            font-size: clamp(2.5rem, 6vw, 4rem);
-            font-weight: 900;
-            color: var(--yellow);
-            margin-bottom: 0.5rem;
-        }
-
-        .urgency-text {
-            font-size: clamp(0.9rem, 2vw, 1.1rem);
-            color: var(--accent-lighter);
-            line-height: 1.6;
-        }
-
-        .next-steps-card {
-            background: rgba(10, 20, 35, 0.8);
-            border: 2px solid var(--primary-light);
-            border-radius: 20px;
-            padding: clamp(1.5rem, 3vw, 2rem);
-            margin: 2rem 0;
-        }
-
-        .next-steps-title {
-            font-size: clamp(1.3rem, 3vw, 2rem);
-            font-weight: 800;
-            color: var(--white);
-            margin-bottom: 1.5rem;
-            text-align: center;
-        }
-
-        .step-item {
-            background: rgba(26, 200, 219, 0.08);
-            border-left: 4px solid var(--primary-light);
-            border-radius: 12px;
-            padding: clamp(1rem, 2vw, 1.5rem);
-            margin-bottom: 1rem;
-        }
-
-        .step-number {
-            display: inline-block;
-            background: var(--gradient-primary);
-            color: var(--white);
-            width: clamp(28px, 6vw, 36px);
-            height: clamp(28px, 6vw, 36px);
-            border-radius: 50%;
-            text-align: center;
-            line-height: clamp(28px, 6vw, 36px);
-            font-weight: 800;
-            font-size: clamp(0.9rem, 2vw, 1.1rem);
-            margin-right: 1rem;
-        }
-
-        .step-content {
-            font-size: clamp(0.9rem, 2vw, 1.1rem);
-            color: var(--white);
-            line-height: 1.6;
-        }
-
-        /* CTA */
-        .cta-premium {
-            background: linear-gradient(135deg, rgba(26, 200, 219, 0.15) 0%, rgba(20, 126, 147, 0.15) 100%);
-            border: 2px solid var(--primary-light);
-            border-radius: 20px;
-            padding: clamp(2rem, 4vw, 3rem) clamp(1.5rem, 3vw, 2rem);
-            text-align: center;
-            margin: 2rem 0;
-        }
-
-        .cta-title {
-            font-size: clamp(1.5rem, 4vw, 2.5rem);
-            font-weight: 900;
-            color: var(--white);
-            margin-bottom: 1rem;
-        }
-
-        .cta-text {
-            font-size: clamp(0.9rem, 2vw, 1.2rem);
-            color: var(--accent-lighter);
-            margin-bottom: 2rem;
-            line-height: 1.7;
-        }
-
-        /* Loading */
-        .loading-premium {
-            text-align: center;
-            padding: clamp(3rem, 6vw, 4rem) clamp(1.5rem, 3vw, 2rem);
-        }
-
-        .loading-orb {
-            width: clamp(120px, 25vw, 150px);
-            height: clamp(120px, 25vw, 150px);
-            margin: 0 auto 2rem;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
-            box-shadow: 
-                0 0 60px rgba(26, 200, 219, 0.6),
-                inset 0 0 40px rgba(255, 255, 255, 0.2);
-            animation: pulse-orb 2s ease-in-out infinite;
-        }
-
-        @keyframes pulse-orb {
-            0%, 100% { 
-                transform: scale(1);
-                box-shadow: 
-                    0 0 60px rgba(26, 200, 219, 0.6),
-                    inset 0 0 40px rgba(255, 255, 255, 0.2);
-            }
-            50% { 
-                transform: scale(1.1);
-                box-shadow: 
-                    0 0 100px rgba(26, 200, 219, 0.8),
-                    0 0 60px rgba(26, 200, 219, 0.4),
-                    inset 0 0 40px rgba(255, 255, 255, 0.2);
-            }
-        }
-
-        .loading-text {
-            font-size: clamp(1.2rem, 3vw, 1.5rem);
-            color: var(--white);
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-
-        .loading-subtext {
-            font-size: clamp(0.9rem, 2vw, 1.1rem);
-            color: var(--accent-lighter);
-        }
-
-        /* Animations */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(40px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-40px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes slideInRight {
-            from {
-                opacity: 0;
-                transform: translateX(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        /* Footer */
-        .footer {
-            text-align: center;
-            padding: 2rem 1rem 1rem;
-            font-size: clamp(0.75rem, 1.5vw, 0.85rem);
-            color: rgba(117, 230, 218, 0.5);
-        }
-    </style>
-</head>
-<body>
-    <!-- Neural Network Background -->
-    <div class="neural-background">
-        <canvas class="neural-canvas" id="neuralCanvas"></canvas>
-    </div>
-
-    <!-- Particles -->
-    <div class="particles" id="particles"></div>
-
-    <div id="root"></div>
-
-    <script type="text/babel">
-        const { useState } = React;
-
-        // Generate particles on load
-        window.addEventListener('DOMContentLoaded', () => {
-            const particlesContainer = document.getElementById('particles');
-            if (particlesContainer) {
-                for (let i = 0; i < 40; i++) {
-                    const particle = document.createElement('div');
-                    particle.className = 'particle';
-                    particle.style.left = Math.random() * 100 + '%';
-                    particle.style.top = Math.random() * 100 + '%';
-                    particle.style.animationDelay = Math.random() * 15 + 's';
-                    particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
-                    particlesContainer.appendChild(particle);
-                }
-            }
-
-            // Neural network canvas
-            const canvas = document.getElementById('neuralCanvas');
-            if (canvas) {
-                const ctx = canvas.getContext('2d');
-                const isMobile = window.innerWidth < 768;
-                
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-
-                const nodes = [];
-                const nodeCount = isMobile ? 15 : 30; // Menos nodos en móvil para mejor performance
-
-                for (let i = 0; i < nodeCount; i++) {
-                    nodes.push({
-                        x: Math.random() * canvas.width,
-                        y: Math.random() * canvas.height,
-                        vx: (Math.random() - 0.5) * (isMobile ? 0.2 : 0.3),
-                        vy: (Math.random() - 0.5) * (isMobile ? 0.2 : 0.3)
-                    });
-                }
-
-                function animate() {
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-                    nodes.forEach(node => {
-                        node.x += node.vx;
-                        node.y += node.vy;
-
-                        if (node.x < 0 || node.x > canvas.width) node.vx *= -1;
-                        if (node.y < 0 || node.y > canvas.height) node.vy *= -1;
-
-                        ctx.beginPath();
-                        ctx.arc(node.x, node.y, 2, 0, Math.PI * 2);
-                        ctx.fillStyle = 'rgba(26, 200, 219, 0.3)';
-                        ctx.fill();
-
-                        nodes.forEach(otherNode => {
-                            const dx = node.x - otherNode.x;
-                            const dy = node.y - otherNode.y;
-                            const distance = Math.sqrt(dx * dx + dy * dy);
-
-                            if (distance < 150) {
-                                ctx.beginPath();
-                                ctx.moveTo(node.x, node.y);
-                                ctx.lineTo(otherNode.x, otherNode.y);
-                                ctx.strokeStyle = `rgba(26, 200, 219, ${0.15 * (1 - distance / 150)})`;
-                                ctx.lineWidth = 0.5;
-                                ctx.stroke();
-                            }
-                        });
-                    });
-
-                    requestAnimationFrame(animate);
-                }
-
-                animate();
-
-                let resizeTimeout;
-                window.addEventListener('resize', () => {
-                    clearTimeout(resizeTimeout);
-                    resizeTimeout = setTimeout(() => {
-                        canvas.width = window.innerWidth;
-                        canvas.height = window.innerHeight;
-                    }, 250);
-                });
-            }
-        });
-
-        // NUEVA ESTRUCTURA: 10 preguntas (5 madurez + 5 familiaridad IA) = 100 puntos madurez
-        // 5 preguntas dolor/urgencia = 100 puntos necesidad
-        const questions = [
-            // SECCIÓN 1: MADUREZ DIGITAL (5 preguntas × 10 puntos = 50 puntos)
-            {
-                id: 1,
-                category: 'maturity',
-                section: 'Madurez Digital',
-                question: '¿Cómo describes tu nivel actual de digitalización en el trabajo?',
-                subtitle: 'Queremos entender tu punto de partida digital',
-                options: [
-                    { value: 2, label: 'Totalmente Analógico', icon: '📝', text: 'Trabajo principalmente con papel, archivos físicos y procesos manuales' },
-                    { value: 4, label: 'Digitalización Básica', icon: '📧', text: 'Uso email, documentos digitales básicos, pero muchos procesos siguen siendo manuales' },
-                    { value: 6, label: 'Parcialmente Digital', icon: '💻', text: 'Tengo varios procesos digitales pero aún hay muchas tareas manuales' },
-                    { value: 8, label: 'Mayormente Digital', icon: '☁️', text: 'La mayoría de mis procesos son digitales con cloud y colaboración' },
-                    { value: 10, label: 'Completamente Digital', icon: '⚡', text: 'Flujo 100% digital con automatizaciones e integraciones avanzadas' }
-                ]
-            },
-            {
-                id: 2,
-                category: 'maturity',
-                section: 'Madurez Digital',
-                question: '¿Qué herramientas de productividad usas regularmente?',
-                subtitle: 'Esto nos ayuda a entender tu stack actual',
-                options: [
-                    { value: 2, label: 'Herramientas Básicas', icon: '📱', text: 'Solo email, WhatsApp y apps muy básicas' },
-                    { value: 4, label: 'Office Básico', icon: '📊', text: 'Word, Excel, PowerPoint y email' },
-                    { value: 6, label: 'Suite Cloud', icon: '☁️', text: 'Google Workspace o Microsoft 365 completo' },
-                    { value: 8, label: 'Stack Productividad', icon: '🛠️', text: 'Suite completa + herramientas gestión proyectos (Notion, Trello, etc)' },
-                    { value: 10, label: 'Stack Avanzado', icon: '1550
-                        ', text: 'Suite + automatizaciones + CRM + integraciones múltiples' }
-                ]
-            },
-            {
-                id: 3,
-                category: 'maturity',
-                section: 'Madurez Digital',
-                question: '¿Cuánto tiempo dedicas diariamente a tareas repetitivas manuales?',
-                subtitle: 'Identificamos oportunidades de automatización',
-                options: [
-                    { value: 2, label: 'Más de 5 horas', icon: '😰', text: 'La mayor parte de mi día son tareas manuales repetitivas' },
-                    { value: 4, label: '3-5 horas', icon: '😓', text: 'Dedico varias horas a copiar, pegar, formatear, organizar manualmente' },
-                    { value: 6, label: '2-3 horas', icon: '⏰', text: 'Un par de horas en tareas repetitivas que podrían automatizarse' },
-                    { value: 8, label: '1-2 horas', icon: '⏱️', text: 'Algunas tareas repetitivas pero ya tengo cierta eficiencia' },
-                    { value: 10, label: 'Menos de 1 hora', icon: '✨', text: 'Ya he automatizado la mayoría de procesos repetitivos' }
-                ]
-            },
-            {
-                id: 4,
-                category: 'maturity',
-                section: 'Madurez Digital',
-                question: '¿Cómo calificas tu capacidad de adoptar nuevas tecnologías?',
-                subtitle: 'Esto determina el ritmo de implementación ideal',
-                options: [
-                    { value: 2, label: 'Me cuesta mucho', icon: '🐢', text: 'Prefiero métodos tradicionales, los cambios tecnológicos me generan resistencia' },
-                    { value: 4, label: 'Lento pero seguro', icon: '🚶', text: 'Me adapto gradualmente pero necesito mucho tiempo y apoyo constante' },
-                    { value: 6, label: 'Ritmo Normal', icon: '🏃', text: 'Me adapto en tiempo razonable con buena documentación y guía' },
-                    { value: 8, label: 'Rápido', icon: ':1548
-                        ', text: 'Aprendo rápido, me gusta experimentar con nuevas herramientas' },
-                    { value: 10, label: 'Early Adopter', icon: '⚡', text: 'Siempre estoy probando lo último, me apasiona la tecnología' }
-                ]
-            },
-            {
-                id: 5,
-                category: 'maturity',
-                section: 'Madurez Digital',
-                question: '¿Qué presupuesto mensual puedes destinar a herramientas tecnológicas?',
-                subtitle: 'Hay soluciones para todos los presupuestos',
-                options: [
-                    { value: 2, label: 'Muy Limitado', icon: '💵', text: '$0-30 USD/mes - Solo puedo usar herramientas gratuitas o muy económicas' },
-                    { value: 4, label: 'Económico', icon: '💰', text: '$30-100 USD/mes - Puedo invertir en algunas herramientas esenciales' },
-                    { value: 6, label: 'Moderado', icon: '💎', text: '$100-250 USD/mes - Puedo pagar herramientas profesionales de calidad' },
-                    { value: 8, label: 'Profesional', icon: '👔', text: '$250-500 USD/mes - Busco herramientas premium y especializadas' },
-                    { value: 10, label: 'Ilimitado', icon: '👑', text: '$500+ USD/mes - Quiero lo mejor del mercado sin importar el costo' }
-                ]
-            },
-
-            // SECCIÓN 2: FAMILIARIDAD CON IA (5 preguntas × 10 puntos = 50 puntos)
-            {
-                id: 6,
-                category: 'ai-familiarity',
-                section: 'Familiaridad con IA',
-                question: '¿Qué tan familiarizado estás con herramientas de Inteligencia Artificial?',
-                subtitle: 'Queremos saber tu experiencia actual con IA',
-                options: [
-                    { value: 2, label: 'Nunca he usado', icon: '🌱', text: 'No he usado ninguna herramienta de IA, apenas conozco el concepto' },
-                    { value: 4, label: 'Principiante', icon: '📱', text: 'He probado ChatGPT una o dos veces pero no lo uso regularmente' },
-                    { value: 6, label: 'Uso Ocasional', icon: '💻', text: 'Uso ChatGPT u otra IA de vez en cuando para tareas puntuales' },
-                    { value: 8, label: 'Usuario Regular', icon: '🎯', text: 'Uso IA regularmente (varias veces por semana) para diferentes tareas' },
-                    { value: 10, label: 'Usuario Avanzado', icon: '🚀', text: 'Uso múltiples IAs diariamente, es parte esencial de mi trabajo' }
-                ]
-            },
-            {
-                id: 7,
-                category: 'ai-familiarity',
-                section: 'Familiaridad con IA',
-                question: '¿Cuántas herramientas de IA diferentes has utilizado?',
-                subtitle: 'Esto nos indica tu exposición al ecosistema de IA',
-                options: [
-                    { value: 2, label: 'Ninguna', icon: '❌', text: 'No he utilizado ninguna herramienta de IA todavía' },
-                    { value: 4, label: 'Solo 1', icon: '1️⃣', text: 'Solo he usado una herramienta de IA (probablemente ChatGPT)' },
-                    { value: 6, label: '2-3 herramientas', icon: '2️⃣', text: 'He probado 2 o 3 herramientas diferentes de IA' },
-                    { value: 8, label: '4-6 herramientas', icon: '🎯', text: 'Tengo experiencia con 4 a 6 herramientas de IA diferentes' },
-                    { value: 10, label: '7+ herramientas', icon: '🌟', text: 'He usado 7 o más herramientas de IA, conozco el ecosistema' }
-                ]
-            },
-            {
-                id: 8,
-                category: 'ai-familiarity',
-                section: 'Familiaridad con IA',
-                question: '¿Qué tan cómodo te sientes escribiendo prompts (instrucciones) para IA?',
-                subtitle: 'El prompting efectivo es clave para aprovechar la IA',
-                options: [
-                    { value: 2, label: 'Muy Incómodo', icon: '😰', text: 'No sé cómo escribir buenos prompts, obtengo resultados malos' },
-                    { value: 4, label: 'Inseguro', icon: '😕', text: 'Escribo prompts básicos pero siento que no saco el máximo provecho' },
-                    { value: 6, label: 'Aceptable', icon: '🙂', text: 'Escribo prompts decentes, a veces obtengo buenos resultados' },
-                    { value: 8, label: 'Competente', icon: '😊', text: 'Sé escribir buenos prompts y casi siempre obtengo lo que necesito' },
-                    { value: 10, label: 'Experto', icon: '🎓', text: 'Domino el arte del prompting, uso técnicas avanzadas y obtengo resultados excelentes' }
-                ]
-            },
-            {
-                id: 9,
-                category: 'ai-familiarity',
-                section: 'Familiaridad con IA',
-                question: '¿Con qué frecuencia utilizas IA en tu trabajo o estudios?',
-                subtitle: 'La consistencia en el uso indica tu nivel de integración',
-                options: [
-                    { value: 2, label: 'Nunca', icon: '⏹️', text: 'No he integrado IA en mi trabajo o estudios aún' },
-                    { value: 4, label: 'Raramente', icon: '🌙', text: 'Menos de una vez por semana, solo en ocasiones muy específicas' },
-                    { value: 6, label: 'Semanalmente', icon: '📅', text: '1-3 veces por semana para tareas específicas' },
-                    { value: 8, label: 'Diariamente', icon: '☀️', text: 'Uso IA casi todos los días para diversas tareas' },
-                    { value: 10, label: 'Constantemente', icon: '⚡', text: 'IA es parte integral de mi flujo de trabajo, la uso múltiples veces al día' }
-                ]
-            },
-            {
-                id: 10,
-                category: 'ai-familiarity',
-                section: 'Familiaridad con IA',
-                question: '¿Qué nivel de conocimiento tienes sobre las capacidades y limitaciones de la IA?',
-                subtitle: 'Entender qué puede y no puede hacer la IA es fundamental',
-                options: [
-                    { value: 2, label: 'Muy Básico', icon: '🌱', text: 'No tengo claro qué puede hacer la IA y qué limitaciones tiene' },
-                    { value: 4, label: 'Básico', icon: '📚', text: 'Sé algunas cosas que puede hacer pero me sorprendo frecuentemente' },
-                    { value: 6, label: 'Intermedio', icon: '🎯', text: 'Entiendo bien para qué tareas es útil la IA y para cuáles no' },
-                    { value: 8, label: 'Avanzado', icon: '🔬', text: 'Conozco en detalle capacidades y limitaciones de diferentes IAs' },
-                    { value: 10, label: 'Experto', icon: '🏆', text: 'Domino el panorama completo de IA, sé exactamente qué herramienta usar para cada caso' }
-                ]
-            },
-
-            // SECCIÓN 3: DOLOR/NECESIDAD/URGENCIA (5 preguntas × 20 puntos = 100 puntos)
-            {
-                id: 11,
-                category: 'pain',
-                section: 'Necesidad & Urgencia',
-                question: '¿Cuál es tu MAYOR problema o dolor en este momento?',
-                subtitle: 'Identifiquemos el obstáculo principal que enfrentas',
-                options: [
-                    { value: 4, label: 'Falta de Tiempo', icon: '⏰', text: 'No me alcanza el tiempo, estoy completamente saturado de tareas' },
-                    { value: 8, label: 'Bajo Rendimiento', icon: '📉', text: 'Mis resultados no son suficientes, necesito ser más productivo' },
-                    { value: 12, label: 'Quedándome Atrás', icon: '🐌', text: 'Siento que la competencia me está superando, necesito actualizarme' },
-                    { value: 16, label: 'No puedo Escalar', icon: '🚧', text: 'Quiero crecer pero estoy estancado, no puedo manejar más volumen' },
-                    { value: 20, label: 'Crisis Urgente', icon: '🚨', text: 'Tengo una necesidad crítica AHORA, podría perder clientes/oportunidades' }
-                ]
-            },
-            {
-                id: 12,
-                category: 'pain',
-                section: 'Necesidad & Urgencia',
-                question: '¿Qué tan urgente es para ti implementar soluciones de IA?',
-                subtitle: 'Esto nos ayuda a priorizar tus próximos pasos',
-                options: [
-                    { value: 4, label: 'Exploratorio', icon: '🔍', text: 'Solo estoy investigando, no tengo prisa, es curiosidad' },
-                    { value: 8, label: 'Planeando', icon: '📅', text: 'Quiero implementar en los próximos 3-6 meses gradualmente' },
-                    { value: 12, label: 'Próximamente', icon: '⏰', text: 'Necesito empezar en las próximas 2-4 semanas' },
-                    { value: 16, label: 'Urgente', icon: '⚡', text: 'Necesito soluciones en los próximos 7 días' },
-                    { value: 20, label: 'Crítico', icon: '🚨', text: 'Es URGENTE, necesito ayuda YA, es crítico para mi negocio' }
-                ]
-            },
-            {
-                id: 13,
-                category: 'pain',
-                section: 'Necesidad & Urgencia',
-                question: '¿Qué está en riesgo si no resuelves esto pronto?',
-                subtitle: 'Entendamos el impacto real de no actuar',
-                options: [
-                    { value: 4, label: 'Nada crítico', icon: '😌', text: 'No hay riesgo inmediato, es más por mejorar y optimizar' },
-                    { value: 8, label: 'Oportunidades perdidas', icon: '🎯', text: 'Estoy dejando pasar oportunidades de crecimiento' },
-                    { value: 12, label: 'Pérdida competitiva', icon: '📉', text: 'La competencia me está ganando terreno, pierdo posicionamiento' },
-                    { value: 16, label: 'Pérdida de ingresos', icon: '💰', text: 'Estoy perdiendo dinero o clientes por no ser eficiente' },
-                    { value: 20, label: 'Riesgo de cierre', icon: '🚨', text: 'Mi negocio/proyecto podría fracasar si no resuelvo esto pronto' }
-                ]
-            },
-            {
-                id: 14,
-                category: 'pain',
-                section: 'Necesidad & Urgencia',
-                question: '¿Cómo afecta tu situación actual tu calidad de vida o bienestar?',
-                subtitle: 'El impacto personal también importa',
-                options: [
-                    { value: 4, label: 'Sin impacto', icon: '😊', text: 'Estoy bien, solo busco optimizar y ser más eficiente' },
-                    { value: 8, label: 'Algo de estrés', icon: '😐', text: 'Siento algo de presión pero es manejable' },
-                    { value: 12, label: 'Estrés frecuente', icon: '😰', text: 'Me genera estrés constante, afecta mi día a día' },
-                    { value: 16, label: 'Burnout cercano', icon: '😫', text: 'Estoy al límite, exhausto, trabajando demasiadas horas' },
-                    { value: 20, label: 'Burnout total', icon: '😭', text: 'Estoy quemado completamente, afecta mi salud y relaciones' }
-                ]
-            },
-            {
-                id: 15,
-                category: 'pain',
-                section: 'Necesidad & Urgencia',
-                question: '¿Qué tipo de apoyo necesitas para implementar soluciones de IA?',
-                subtitle: 'Esto define el nivel de acompañamiento ideal',
-                options: [
-                    { value: 4, label: 'Autodidacta', icon: '📚', text: 'Solo necesito recursos, puedo aprender solo' },
-                    { value: 8, label: 'Guías básicas', icon: '🗺️', text: 'Necesito documentación clara y tutoriales bien explicados' },
-                    { value: 12, label: 'Algo de mentoría', icon: '🤝', text: 'Quiero sesiones ocasionales de mentoría y seguimiento' },
-                    { value: 16, label: 'Acompañamiento', icon: '👨‍🏫', text: 'Necesito mentoría continua y apoyo constante' },
-                    { value: 20, label: 'Implementación completa', icon: '👨‍💼', text: 'Necesito que me ayuden hands-on a implementar TODO desde cero' }
-                ]
-            }
-        ];
-
-        const App = () => {
-            const [currentStep, setCurrentStep] = useState('welcome');
-            const [currentQuestion, setCurrentQuestion] = useState(0);
-            const [answers, setAnswers] = useState({});
-            const [results, setResults] = useState(null);
-              // Estados para el modal de datos personales
-  const [showModal, setShowModal] = React.useState(false);
-  const [userData, setUserData] = React.useState({
-    nombre: '',
-    correo: '',
-    celular: '',
-    empresa: '',
-    cargo: ''
-  });
-
-            const handleAnswer = (questionId, value) => {
-                setAnswers(prev => ({
-                    ...prev,
-                    [questionId]: value
-                }));
-            };
-
-            const nextQuestion = () => {
-                if (currentQuestion < questions.length - 1) {
-                    setCurrentQuestion(prev => prev + 1);
-                } else {
-                    setCurrentStep('loading');
-                    setTimeout(() => {
-                        calculateResults();
-                        setCurrentStep('results');
-                    }, 2500);
-                }
-            };
-
-            const prevQuestion = () => {
-                if (currentQuestion > 0) {
-                    setCurrentQuestion(prev => prev - 1);
-                }
-            };
-
-            const calculateResults = () => {
-                // Calcular scores
-                const maturityQuestions = questions.filter(q => q.category === 'maturity');
-                const aiQuestions = questions.filter(q => q.category === 'ai-familiarity');
-                const painQuestions = questions.filter(q => q.category === 'pain');
-
-                const maturityScore = maturityQuestions.reduce((sum, q) => sum + (answers[q.id] || 0), 0);
-                const aiScore = aiQuestions.reduce((sum, q) => sum + (answers[q.id] || 0), 0);
-                const painScore = painQuestions.reduce((sum, q) => sum + (answers[q.id] || 0), 0);
-
-                // Score total de madurez (0-100)
-                const totalMaturityScore = maturityScore + aiScore;
-
-                // Score de urgencia/necesidad (0-100)
-                const urgencyScore = painScore;
-
-                // Determinar nivel
-                let maturityLevel, urgencyLevel;
-
-                if (totalMaturityScore <= 20) maturityLevel = 'Principiante';
-                else if (totalMaturityScore <= 40) maturityLevel = 'Básico';
-                else if (totalMaturityScore <= 60) maturityLevel = 'Intermedio';
-                else if (totalMaturityScore <= 80) maturityLevel = 'Avanzado';
-                else maturityLevel = 'Experto';
-
-                if (urgencyScore <= 20) urgencyLevel = 'Exploratorio - Sin prisa';
-                else if (urgencyScore <= 40) urgencyLevel = 'Moderado - Planificando';
-                else if (urgencyScore <= 60) urgencyLevel = 'Importante - Próximamente';
-                else if (urgencyScore <= 80) urgencyLevel = 'Urgente - Acción ya';
-                else urgencyLevel = 'CRÍTICO - Necesita ayuda inmediata';
-
-                setResults({
-                    maturityScore: totalMaturityScore,
-                    maturityLevel,
-                    urgencyScore,
-                    urgencyLevel
-                });
-            };
-
-            const restartQuiz = () => {
-                setCurrentStep('welcome');
-                setCurrentQuestion(0);
-                setAnswers({});
-                setResults(null);
-            };
-
-            const currentQ = questions[currentQuestion];
-            const progress = ((currentQuestion + 1) / questions.length) * 100;
-            const isAnswered = answers[currentQ?.id] !== undefined;
-
-            // Progress circle calculations
-            const radius = 70;
-            const circumference = 2 * Math.PI * radius;
-            const progressOffset = circumference - (progress / 100) * circumference;
-
-            // Score circle calculations
-            const scoreRadius = 100;
-            const scoreCircumference = 2 * Math.PI * scoreRadius;
-
-            return (
-                <div className="app-container">
-                    <div className="header">
-                        <div className="logo-container">
-                            <div className="logo-3d">🤖</div>
-                        </div>
-                        <h1 className="main-title">Diagnóstico IA 360°</h1>
-                        <p className="subtitle">Tu Evaluación Personalizada de Madurez Digital</p>
-                        <p className="creator-tag">Desarrollado por el Ing. Jorge Hugo Pérez para IA LABS<br/>una división de ICONE Academy</p>
-                    </div>
-
-                    <div className="glass-card">
-                        {currentStep === 'welcome' && (
-                            <div className="welcome-screen">
-                                <div className="welcome-visual">🎯</div>
-                                <h2 className="welcome-title">Descubre tu Nivel de Madurez Digital</h2>
-                                <p className="welcome-text">
-                                    En solo 5 minutos obtendrás dos evaluaciones profesionales:<br/>
-                                    <strong>1) Tu Madurez Digital (0-100 puntos)</strong><br/>
-                                    <strong>2) Tu Nivel de Urgencia (0-100 puntos)</strong><br/>
-                                    Más los 2 pasos exactos que debes dar ahora.
-                                </p>
-
-                                <div className="feature-grid">
-                                    <div className="feature-card">
-                                        <div className="feature-icon">⚡</div>
-                                        <div className="feature-title">5 Minutos</div>
-                                        <div className="feature-desc">Rápido y preciso</div>
-                                    </div>
-                                    <div className="feature-card">
-                                        <div className="feature-icon">📊</div>
-                                        <div className="feature-title">10 Preguntas</div>
-                                        <div className="feature-desc">Evaluación completa</div>
-                                    </div>
-                                    <div className="feature-card">
-                                        <div className="feature-icon">🎯</div>
-                                        <div className="feature-title">2 Scores</div>
-                                        <div className="feature-desc">Madurez + Urgencia</div>
-                                    </div>
-                                    <div className="feature-card">
-                                        <div className="feature-icon">:1545
-                                        </div>
-                                        <div className="feature-title">Plan Acción</div>
-                                        <div className="feature-desc">Próximos pasos</div>
-                                    </div>
-                                </div>
-
-                                <button 
-                                    className="btn-holographic" 
-                onClick={() => setShowModal(true)}
-                                    style={{maxWidth: '400px', margin: '2rem auto 0'}}
-                                >
-                                    Comenzar Evaluación →
-                                </button>
-                            </div>
-                        )}
-
-                        {currentStep === 'questions' && (
-                            <>
-                                <div className="progress-container">
-                                    <div className="progress-ring">
-                                        <svg width="100%" height="100%" viewBox="0 0 180 180">
-                                            <defs>
-                                                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                                    <stop offset="0%" stopColor="#1ac8db" />
-                                                    <stop offset="100%" stopColor="#147e93" />
-                                                </linearGradient>
-                                            </defs>
-                                            <circle
-                                                fill="none"
-                                                stroke="rgba(26, 200, 219, 0.1)"
-                                                strokeWidth="8"
-                                                cx="90"
-                                                cy="90"
-                                                r={radius}
-                                            />
-                                            <circle
-                                                fill="none"
-                                                stroke="url(#gradient)"
-                                                strokeWidth="8"
-                                                strokeLinecap="round"
-                                                cx="90"
-                                                cy="90"
-                                                r={radius}
-                                                strokeDasharray={circumference}
-                                                strokeDashoffset={progressOffset}
-                                                style={{transition: 'stroke-dashoffset 0.5s ease'}}
-                                            />
-                                        </svg>
-                                        <div className="progress-text">{currentQuestion + 1}/{questions.length}</div>
-                                    </div>
-                                    <div className="progress-label">{currentQ.section}</div>
-                                </div>
-
-                                <div className="question-card">
-                                    <div className="question-badge">
-                                        {currentQ.category === 'maturity' && '🔧 Madurez Digital'}
-                                        {currentQ.category === 'ai-familiarity' && '🤖 Familiaridad IA'}
-                                        {currentQ.category === 'pain' && '💡 Necesidad & Urgencia'}
-                                    </div>
-                                    <h2 className="question-title">{currentQ.question}</h2>
-                                    <p className="question-subtitle">{currentQ.subtitle}</p>
-
-                                    <div className="options-grid">
-                                        {currentQ.options.map((option) => (
-                                            <div 
-                                                key={option.value}
-                                                className={`option-modern ${answers[currentQ.id] === option.value ? 'selected' : ''}`}
-                                                onClick={() => handleAnswer(currentQ.id, option.value)}
-                                            >
-                                                <span className="option-icon">{option.icon}</span>
-                                                <div className="option-content">
-                                                    <span className="option-label">{option.label}</span>
-                                                    <div className="option-text">{option.text}</div>
-                                                    <div className="option-points">{option.value} puntos</div>
-                                                </div>
-                                                <div className="option-check"></div>
-                                            </div>
-                                        ))}
-                                    </div>
-
-                                    <div className="button-group">
-                                        <button 
-                                            className="btn-holographic btn-secondary" 
-                                            onClick={prevQuestion}
-                                            disabled={currentQuestion === 0}
-                                        >
-                                            ← Anterior
-                                        </button>
-                                        <button 
-                                            className="btn-holographic" 
-                                            onClick={nextQuestion}
-                                            disabled={!isAnswered}
-                                        >
-                                            {currentQuestion === questions.length - 1 ? 'Ver Resultados 🎉' : 'Siguiente →'}
-                                        </button>
-                                    </div>
-                                </div>
-                            </>
-                        )}
-
-                        {currentStep === 'loading' && (
-                            <div className="loading-premium">
-                                <div className="loading-orb"></div>
-                                <p className="loading-text">Analizando tus respuestas...</p>
-                                <p className="loading-subtext">Generando tu evaluación personalizada</p>
-                            </div>
-                        )}
-
-                        {currentStep === 'results' && results && (
-                            <div className="results-screen">
-                                {/* MADUREZ DIGITAL */}
-                                <div className="score-section">
-                                    <h3 style={{fontSize: 'clamp(1.3rem, 3vw, 2rem)', fontWeight: '800', textAlign: 'center', marginBottom: '2rem'}}>
-                                        📊 Tu Madurez Digital
-                                    </h3>
-                                    <div className="score-circle">
-                                        <svg width="100%" height="100%" viewBox="0 0 280 280">
-                                            <defs>
-                                                <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                                    <stop offset="0%" stopColor="#1ac8db" />
-                                                    <stop offset="100%" stopColor="#147e93" />
-                                                </linearGradient>
-                                            </defs>
-                                            <circle
-                                                fill="none"
-                                                stroke="rgba(26, 200, 219, 0.1)"
-                                                strokeWidth="12"
-                                                cx="140"
-                                                cy="140"
-                                                r={scoreRadius}
-                                            />
-                                            <circle
-                                                fill="none"
-                                                stroke="url(#scoreGradient)"
-                                                strokeWidth="12"
-                                                strokeLinecap="round"
-                                                cx="140"
-                                                cy="140"
-                                                r={scoreRadius}
-                                                strokeDasharray={scoreCircumference}
-                                                strokeDashoffset={scoreCircumference - (results.maturityScore / 100) * scoreCircumference}
-                                                transform="rotate(-90 140 140)"
-                                                style={{transition: 'stroke-dashoffset 1s ease'}}
-                                            />
-                                        </svg>
-                                        <div className="score-value-large">{results.maturityScore}</div>
-                                        <div className="score-label">/100 puntos</div>
-                                    </div>
-                                    <div className="level-badge">{results.maturityLevel}</div>
-                                </div>
-
-                                {/* NIVEL DE URGENCIA */}
-                                <div className="urgency-banner">
-                                    <h3 className="urgency-title">⚡ Nivel de Necesidad de Ayuda</h3>
-                                    <div className="urgency-score">{results.urgencyScore}/100</div>
-                                    <div className="urgency-text">
-                                        <strong>{results.urgencyLevel}</strong><br/>
-                                        {results.urgencyScore >= 80 && 'Necesitas ayuda URGENTE. Tu situación requiere atención inmediata.'}
-                                        {results.urgencyScore >= 60 && results.urgencyScore < 80 && 'Tu situación es importante y deberías actuar pronto.'}
-                                        {results.urgencyScore >= 40 && results.urgencyScore < 60 && 'Tienes una necesidad moderada, es buen momento para actuar.'}
-                                        {results.urgencyScore >= 20 && results.urgencyScore < 40 && 'Estás en fase de planeación, puedes implementar gradualmente.'}
-                                        {results.urgencyScore < 20 && 'Estás explorando sin prisa, tienes tiempo para investigar.'}
-                                    </div>
-                                </div>
-
-                                {/* PRÓXIMOS PASOS */}
-                                <div className="next-steps-card">
-                                    <h3 className="next-steps-title">🎯 Tus 2 Próximos Pasos</h3>
-                                    
-                                    <div className="step-item">
-                                        <span className="step-number">1</span>
-                                        <div className="step-content">
-                                            <strong>Paso 1: {results.maturityScore <= 40 ? 'Comienza con lo Básico' : results.maturityScore <= 70 ? 'Optimiza tu Stack Actual' : 'Lleva tu Expertise al Siguiente Nivel'}</strong><br/>
-                                            {results.maturityScore <= 40 && 'Empieza con ChatGPT Plus ($20/mes) y NotebookLM (gratis). Estas dos herramientas te darán una base sólida. Dedica 30 minutos diarios durante una semana a experimentar con prompts básicos.'}
-                                            {results.maturityScore > 40 && results.maturityScore <= 70 && 'Ya tienes bases, ahora profundiza. Añade Claude Sonnet 4.5 para análisis avanzado y Perplexity Pro para research. Implementa 3 automatizaciones específicas en tu flujo de trabajo esta semana.'}
-                                            {results.maturityScore > 70 && 'Tu nivel es avanzado. Enfócate en integrar múltiples IAs en workflows complejos. Considera GLM-4.7 para coding agéntico y crea tu propio stack personalizado. Documenta tus mejores prácticas para escalar tu conocimiento.'}
-                                        </div>
-                                    </div>
-
-                                    <div className="step-item">
-                                        <span className="step-number">2</span>
-                                        <div className="step-content">
-                                            <strong>Paso 2: {results.urgencyScore >= 60 ? 'Agenda Mentoría de Urgencia' : results.urgencyScore >= 40 ? 'Planifica tu Implementación' : 'Investiga y Aprende'}</strong><br/>
-                                            {results.urgencyScore >= 60 && 'Tu situación requiere atención inmediata. Agenda una Mentoría de Iniciación conmigo para implementar soluciones rápidas esta misma semana. Te ayudaré hands-on a resolver tus pain points críticos.'}
-                                            {results.urgencyScore >= 40 && results.urgencyScore < 60 && 'Crea un plan de implementación de 30 días. Define 3 procesos clave que quieres optimizar con IA y agenda una sesión de mentoría para crear tu roadmap personalizado.'}
-                                            {results.urgencyScore < 40 && 'Tienes tiempo para investigar. Únete a la comunidad de IA LABS, consume contenido educativo y cuando estés listo, agenda una sesión de orientación para definir tu camino óptimo.'}
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* CTA */}
-                                <div className="cta-premium">
-                                    <h3 className="cta-title">:1550
-                                        ¿Listo para Dar el Siguiente Paso?</h3>
-                                    <p className="cta-text">
-                                        Agenda tu <strong>Mentoría de Iniciación</strong> y te ayudaré personalmente a implementar 
-                                        las soluciones exactas que necesitas según tu perfil. Configuración, estrategia, 
-                                        prompts optimizados y acompañamiento continuo.
-                                    </p>
-
-                                    <div className="button-group">
-                                        <a 
-                                            href="https://wa.me/573158940980?text=Hola Jorge! Completé el Diagnóstico IA 360° y quiero agendar mi Mentoría de Iniciación"
-                                            className="btn-holographic"
-                                            target="_blank"
-                                            rel="noopener"
-                                            style={{textDecoration: 'none', textAlign: 'center', display: 'block'}}
-                                        >
-                                            📱 Agendar Mentoría Ahora
-                                        </a>
-                                        <button className="btn-holographic btn-secondary" onClick={restartQuiz}>
-                                            🔄 Hacer Nuevo Diagnóstico
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-                    </div>
-
-                    <div className="footer">
-                        Desarrollado por el Ing. Jorge Hugo Pérez | IA LABS - División de ICONE Academy<br/>
-                        📧 jorgehugoperez@iconeacademy.com | 📱 +57 315 8940980
-                        
-      {/* Modal de datos personales */}
-      {showModal && (
-        <div style={{position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999}}>
-          <div style={{background: '#054445', padding: '40px', borderRadius: '20px', maxWidth: '500px', width: '90%', border: '2px solid #75e6da'}}>
-            <h2 style={{color: '#75e6da', textAlign: 'center', marginBottom: '30px'}}>Datos del Participante</h2>            <input
-              type="text"
-              placeholder="Nombre y Apellidos *"
-              value={userData.nombre}
-              onChange={(e) => setUserData({...userData, nombre: e.target.value})}
-              style={{width: '100%', padding: '15px', marginBottom: '15px', borderRadius: '10px', border: '2px solid #75e6da', background: '#fff', fontSize: '16px'}}
-            />
-            <input
-              type="email"
-              placeholder="Correo Electrónico *"              value={userData.correo}
-              onChange={(e) => setUserData({...userData, correo: e.target.value})}
-              style={{width: '100%', padding: '15px', marginBottom: '15px', borderRadius: '10px', border: '2px solid #75e6da', background: '#fff', fontSize: '16px'}}
-            />
-            <input
-              type="tel"
-              placeholder="N\u00famero de Celular *"
-              value={userData.celular}
-              onChange={(e) => setUserData({...userData, celular: e.target.value})}
-              style={{width: '100%', padding: '15px', marginBottom: '15px', borderRadius: '10px', border: '2px solid #75e6da', background: '#fff', fontSize: '16px'}}
-            />
-            <input
-              type="text"
-              placeholder="Empresa *"
-              value={userData.empresa}
-              onChange={(e) => setUserData({...userData, empresa: e.target.value})}
-              style={{width: '100%', padding: '15px', marginBottom: '15px', borderRadius: '10px', border: '2px solid #75e6da', background: '#fff', fontSize: '16px'}}
-            />
-            <input
-              type="text"
-              placeholder="Cargo *"
-              value={userData.cargo}
-              onChange={(e) => setUserData({...userData, cargo: e.target.value})}
-              style={{width: '100%', padding: '15px', marginBottom: '25px', borderRadius: '10px', border: '2px solid #75e6da', background: '#fff', fontSize: '16px'}}
-            />
-            <button
-              onClick={() => {
-                if (!userData.nombre || !userData.correo || !userData.celular || !userData.empresa || !userData.cargo) {
-                  alert('\u26a0\ufe0f Por favor completa todos los campos');
-                  return;
-                }
-                setShowModal(false);
-                setCurrentStep('questions');
-              }}
-              style={{width: '100%', padding: '18px', background: 'linear-gradient(135deg, #75e6da 0%, #5bc0be 100%)', color: '#054445', border: 'none', borderRadius: '10px', fontSize: '18px', fontWeight: 'bold', cursor: 'pointer'}}
-            >
-                            🚀 Iniciar Diagnóstico
-                            </button>
-          </div>
-        </div>
-      )}
-                    </div>
-                </div>
-            );
-        };
-
-        ReactDOM.render(<App />, document.getElementById('root'));
-    </script>
-// Integración invisible con Google Sheets
-const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycby7msU2IL_nBKlGcGUeHeX41zvSv6axk4o0-WPw0mo_1qTQ1qVbUBXaqg42ns_MZZFO/exec';
-
-// Interceptar cuando se finaliza el diagnóstico (sin cambiar UX)
-window.addEventListener('load', () => {
-  const originalConsoleLog = console.log;
-  console.log = function(...args) {
-    originalConsoleLog.apply(console, args);
-    // Detectar cuando se completa el diagnóstico
-    if (args[0] && typeof args[0] === 'object' && args[0].puntajeTotal) {
-      enviarDatosInvisible(args[0]);
-    }
-  };
-});
-
-function enviarDatosInvisible(datos) {
-  fetch(GOOGLE_SHEETS_URL, {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: {'Content-Type': 'application/json'},
-      const datosCompletos = {
-    ...datos,
-    ...window.userData
-  };
-  
-        body: JSON.stringify(datosCompletos)
-  }).catch(e => console.error('Error al enviar:', e));
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IA Intensiva para Emprendedores — Del Proceso al Negocio Inteligente</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0F0F1A;
+  --orange: #E05C00;
+  --orange2: #FF7A1A;
+  --orange-glow: rgba(224,92,0,0.15);
+  --green: #0A7B50;
+  --green2: #12BD78;
+  --purple: #6B2FA0;
+  --cream: #FFFAF4;
+  --warm-gray: #F5F0E8;
+  --text: #2A2A3E;
+  --muted: #6B6B85;
+  --white: #FFFFFF;
+  --card-bg: rgba(255,255,255,0.06);
+  --border: rgba(255,255,255,0.1);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--ink); color:var(--white); overflow-x:hidden; }
+
+/* ── NAV ─────────────────────────────────────────── */
+nav {
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  height:60px; display:flex; align-items:center; justify-content:space-between;
+  padding:0 2.5rem;
+  background:rgba(15,15,26,0.92); backdrop-filter:blur(16px);
+  border-bottom:1px solid rgba(224,92,0,0.2);
+}
+.nav-brand {
+  font-family:'Syne',sans-serif; font-weight:800; font-size:0.95rem;
+  color:var(--orange2); letter-spacing:0.02em;
+  display:flex; align-items:center; gap:0.5rem;
+}
+.nav-dot { width:8px; height:8px; border-radius:50%; background:var(--orange2); animation:breathe 2.5s infinite; }
+@keyframes breathe { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(0.7);opacity:0.5} }
+.nav-pills { display:flex; gap:0.25rem; list-style:none; }
+.nav-pills a {
+  display:block; padding:0.35rem 0.9rem;
+  font-size:0.76rem; font-weight:600; letter-spacing:0.04em; text-transform:uppercase;
+  color:rgba(255,255,255,0.4); text-decoration:none; border-radius:100px; transition:all 0.2s;
+}
+.nav-pills a:hover, .nav-pills a.active { color:var(--orange2); background:rgba(224,92,0,0.12); }
+
+/* ── PROGRESS ────────────────────────────────────── */
+.prog-wrap { position:fixed; top:60px; left:0; right:0; height:2px; z-index:99; background:rgba(255,255,255,0.04); }
+.prog-bar { height:100%; background:linear-gradient(90deg,var(--orange),var(--orange2),#FFB347); width:0; transition:width .1s; }
+
+/* ── HERO ────────────────────────────────────────── */
+#hero {
+  min-height:100vh; display:flex; flex-direction:column; justify-content:center;
+  padding:100px 0 60px; position:relative; overflow:hidden;
+  background:radial-gradient(ellipse at 10% 60%, rgba(224,92,0,0.12) 0%, transparent 55%),
+             radial-gradient(ellipse at 85% 20%, rgba(107,47,160,0.1) 0%, transparent 45%),
+             var(--ink);
+}
+.hero-noise {
+  position:absolute; inset:0; pointer-events:none; opacity:0.4;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+}
+.hero-container { max-width:1100px; margin:0 auto; padding:0 2.5rem; position:relative; z-index:1; }
+.hero-chip {
+  display:inline-flex; align-items:center; gap:0.6rem;
+  padding:0.4rem 1rem 0.4rem 0.5rem;
+  background:rgba(224,92,0,0.12); border:1px solid rgba(224,92,0,0.3);
+  border-radius:100px; margin-bottom:2rem;
+  font-size:0.75rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--orange2);
+  animation:fadeUp 0.7s ease both;
+}
+.hero-chip-badge {
+  background:var(--orange2); color:var(--white); border-radius:100px;
+  padding:0.15rem 0.6rem; font-size:0.65rem; font-weight:800; letter-spacing:0.06em;
+}
+.hero-headline {
+  font-family:'Syne',sans-serif; font-weight:800; line-height:1.0;
+  font-size:clamp(3.2rem, 8vw, 6.5rem);
+  margin-bottom:1.5rem; animation:fadeUp 0.7s 0.1s ease both;
+}
+.hero-headline .l1 { display:block; color:var(--white); }
+.hero-headline .l2 { display:block; color:var(--orange2); }
+.hero-headline .l3 { display:block; color:transparent; -webkit-text-stroke:2px rgba(255,255,255,0.25); }
+.hero-desc {
+  font-size:1.05rem; line-height:1.8; color:rgba(255,255,255,0.55);
+  max-width:580px; margin-bottom:2.5rem; animation:fadeUp 0.7s 0.2s ease both;
+}
+.hero-desc strong { color:var(--white); }
+.hero-stats {
+  display:flex; gap:1.5rem; flex-wrap:wrap; margin-bottom:3rem;
+  animation:fadeUp 0.7s 0.3s ease both;
+}
+.stat {
+  display:flex; flex-direction:column; padding:1rem 1.5rem;
+  background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:12px;
+}
+.stat-val { font-family:'Syne',sans-serif; font-size:1.6rem; font-weight:800; color:var(--orange2); }
+.stat-label { font-size:0.76rem; color:rgba(255,255,255,0.4); margin-top:0.2rem; text-transform:uppercase; letter-spacing:0.06em; }
+.hero-btn {
+  display:inline-flex; align-items:center; gap:0.7rem;
+  padding:0.9rem 2rem; background:var(--orange); color:white;
+  border:none; border-radius:10px; font-family:'Plus Jakarta Sans',sans-serif;
+  font-weight:700; font-size:0.9rem; cursor:pointer; text-decoration:none;
+  transition:all 0.3s; animation:fadeUp 0.7s 0.4s ease both;
+}
+.hero-btn:hover { background:var(--orange2); transform:translateY(-2px); box-shadow:0 12px 32px rgba(224,92,0,0.4); }
+.hero-floating {
+  position:absolute; right:0; top:50%; transform:translateY(-50%);
+  width:380px; display:flex; flex-direction:column; gap:0.75rem; padding:2rem; opacity:0.7;
+}
+.float-card {
+  padding:1rem 1.25rem; border-radius:12px; border:1px solid rgba(255,255,255,0.08);
+  background:rgba(255,255,255,0.04); display:flex; align-items:center; gap:0.75rem;
+  font-size:0.82rem; color:rgba(255,255,255,0.6); animation:slideIn 0.5s ease both;
+}
+.float-card:nth-child(1){animation-delay:0.8s}
+.float-card:nth-child(2){animation-delay:1s}
+.float-card:nth-child(3){animation-delay:1.2s}
+.float-card:nth-child(4){animation-delay:1.4s}
+.float-icon { font-size:1.4rem; }
+.float-card strong { color:var(--white); display:block; font-size:0.85rem; margin-bottom:0.1rem; }
+@keyframes slideIn { from{opacity:0;transform:translateX(20px)} to{opacity:1;transform:none} }
+@keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:none} }
+
+/* ── SECTIONS ────────────────────────────────────── */
+section { padding:100px 0 80px; }
+.container { max-width:1100px; margin:0 auto; padding:0 2.5rem; }
+.sec-label {
+  font-family:'JetBrains Mono',monospace; font-size:0.72rem; font-weight:500;
+  letter-spacing:0.14em; text-transform:uppercase; color:var(--orange2);
+  display:flex; align-items:center; gap:0.75rem; margin-bottom:0.75rem;
+}
+.sec-label::before { content:'//'; opacity:0.5; }
+.sec-title {
+  font-family:'Syne',sans-serif; font-weight:800;
+  font-size:clamp(2rem,4vw,2.8rem); line-height:1.15; margin-bottom:1.25rem; color:var(--white);
+}
+.sec-title em { font-style:normal; color:var(--orange2); }
+.sec-body { font-size:0.95rem; line-height:1.8; color:rgba(255,255,255,0.55); max-width:680px; }
+
+/* ── REVEAL ─────────────────────────────────────── */
+.reveal { opacity:0; transform:translateY(24px); transition:opacity 0.6s ease, transform 0.6s ease; }
+.reveal.visible { opacity:1; transform:none; }
+.rd1 { transition-delay:0.1s; }
+.rd2 { transition-delay:0.2s; }
+.rd3 { transition-delay:0.3s; }
+
+/* ── WHY SECTION ─────────────────────────────────── */
+#por-que { background:linear-gradient(180deg, #141426 0%, var(--ink) 100%); }
+.why-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; margin-top:2.5rem; }
+.why-card {
+  padding:2rem; border-radius:16px; border:1px solid rgba(255,255,255,0.06);
+  background:rgba(255,255,255,0.03); transition:all 0.3s; position:relative; overflow:hidden;
+}
+.why-card::before {
+  content:''; position:absolute; left:0; top:0; bottom:0; width:3px;
+  background:var(--orange); border-radius:0;
+}
+.why-card:hover { transform:translateX(6px); background:rgba(224,92,0,0.06); border-color:rgba(224,92,0,0.2); }
+.why-num { font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:var(--orange2); opacity:0.7; margin-bottom:0.75rem; }
+.why-card h3 { font-family:'Syne',sans-serif; font-size:1.05rem; font-weight:700; margin-bottom:0.6rem; }
+.why-card p { font-size:0.86rem; line-height:1.65; color:rgba(255,255,255,0.5); }
+
+/* ── PROFILES ─────────────────────────────────────── */
+#perfiles { background:linear-gradient(180deg,#141426,var(--ink)); }
+.profiles-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.25rem; margin-top:2.5rem; }
+.profile-card {
+  padding:2rem; border-radius:16px; border:1px solid rgba(255,255,255,0.07);
+  background:rgba(255,255,255,0.03); transition:all 0.3s;
+}
+.profile-card:hover { transform:translateY(-5px); border-color:rgba(224,92,0,0.25); }
+.profile-emoji { font-size:2.2rem; margin-bottom:1rem; }
+.profile-card h3 { font-family:'Syne',sans-serif; font-size:1.1rem; font-weight:800; margin-bottom:0.6rem; }
+.profile-card h3 span { display:block; font-size:0.7rem; color:var(--orange2); font-weight:600; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:0.25rem; }
+.profile-card p { font-size:0.85rem; line-height:1.65; color:rgba(255,255,255,0.5); }
+.p1 { border-top:3px solid var(--orange); }
+.p2 { border-top:3px solid #3D1F6E; }
+.p3 { border-top:3px solid var(--green2); }
+
+/* ── MODULES ─────────────────────────────────────── */
+#modulos { background:var(--ink); }
+.mod-nav { display:flex; gap:0; margin-bottom:2rem; border-radius:12px; overflow:hidden; border:1px solid rgba(255,255,255,0.08); }
+.mod-tab {
+  flex:1; padding:1rem 0.5rem; background:rgba(255,255,255,0.03);
+  border:none; color:rgba(255,255,255,0.4); cursor:pointer;
+  font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600;
+  transition:all 0.2s; border-right:1px solid rgba(255,255,255,0.06);
+  text-align:center; line-height:1.3;
+}
+.mod-tab:last-child{border-right:none}
+.mod-tab:hover { color:var(--white); background:rgba(255,255,255,0.05); }
+.mod-tab.active { background:var(--orange); color:white; }
+.mod-tab .tab-day { font-size:0.65rem; opacity:0.7; display:block; margin-bottom:0.2rem; text-transform:uppercase; letter-spacing:0.06em; }
+.mod-panel { display:none; }
+.mod-panel.active { display:grid; grid-template-columns:300px 1fr; gap:0; border-radius:16px; overflow:hidden; border:1px solid rgba(255,255,255,0.08); animation:panelIn 0.3s ease; }
+@keyframes panelIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+.mod-left {
+  padding:2.5rem; display:flex; flex-direction:column; justify-content:space-between;
+  background:linear-gradient(160deg,var(--orange),#8B2F00);
+}
+.mod-left .big-num { font-family:'Syne',sans-serif; font-size:7rem; font-weight:800; opacity:0.15; line-height:1; margin-bottom:1rem; }
+.mod-left h2 { font-family:'Syne',sans-serif; font-size:1.4rem; font-weight:800; line-height:1.2; margin-bottom:1rem; }
+.mod-left .schedule { font-family:'JetBrains Mono',monospace; font-size:0.75rem; opacity:0.7; }
+.mod-hours-badge {
+  display:inline-flex; align-items:center; gap:0.4rem;
+  padding:0.4rem 0.9rem; background:rgba(255,255,255,0.15); border-radius:100px;
+  font-size:0.78rem; font-weight:600; margin-top:1rem;
+}
+.mod-right { padding:2.5rem; background:rgba(255,255,255,0.02); }
+.mod-obj { font-size:0.92rem; line-height:1.75; color:rgba(255,255,255,0.6); padding-bottom:1.75rem; margin-bottom:1.75rem; border-bottom:1px solid rgba(255,255,255,0.08); }
+.themes-list { display:grid; grid-template-columns:1fr 1fr; gap:0.65rem; }
+.theme-row { display:flex; gap:0.6rem; align-items:flex-start; font-size:0.83rem; color:rgba(255,255,255,0.65); line-height:1.5; }
+.tdot { width:5px; height:5px; border-radius:50%; background:var(--orange2); flex-shrink:0; margin-top:0.5rem; }
+.mod-deliverable {
+  margin-top:1.75rem; padding:1.25rem; border-radius:12px;
+  background:rgba(224,92,0,0.08); border:1px solid rgba(224,92,0,0.2);
+  display:flex; gap:0.75rem; align-items:flex-start;
+}
+.mod-deliverable-icon { font-size:1.4rem; flex-shrink:0; }
+.mod-deliverable-text h4 { font-size:0.82rem; font-weight:700; color:var(--orange2); margin-bottom:0.3rem; text-transform:uppercase; letter-spacing:0.05em; }
+.mod-deliverable-text p { font-size:0.82rem; color:rgba(255,255,255,0.55); line-height:1.5; }
+.mod-panel.m2 .mod-left { background:linear-gradient(160deg,#0A5E3A,#062B1C); }
+.mod-panel.m3 .mod-left { background:linear-gradient(160deg,#3D1F6E,#1A0A36); }
+.mod-panel.m4 .mod-left { background:linear-gradient(160deg,#1A1A2E,#0A0A18); border-right:2px solid var(--orange); }
+.mod-panel.m5 .mod-left { background:linear-gradient(160deg,#1A2E1A,#0A180A); border-right:2px solid var(--green2); }
+.mod-panel.m2 .tdot { background:var(--green2); }
+.mod-panel.m3 .tdot { background:#B07EEA; }
+.mod-panel.m4 .tdot { background:var(--orange2); }
+.mod-panel.m5 .tdot { background:var(--green2); }
+
+/* ── AI THREAD ───────────────────────────────────── */
+#ia-transversal { background:linear-gradient(160deg,#0F0F1A,#141426); }
+.ai-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:1rem; margin-top:2.5rem; }
+.ai-card {
+  padding:1.75rem; border-radius:14px; border:1px solid rgba(255,255,255,0.07);
+  background:rgba(255,255,255,0.03); transition:all 0.3s; text-align:center;
+}
+.ai-card:hover { transform:translateY(-5px); border-color:rgba(224,92,0,0.3); background:rgba(224,92,0,0.06); }
+.ai-card-icon { font-size:2rem; margin-bottom:1rem; }
+.ai-card h3 { font-family:'Syne',sans-serif; font-size:0.95rem; font-weight:700; margin-bottom:0.6rem; color:var(--orange2); }
+.ai-card p { font-size:0.8rem; line-height:1.6; color:rgba(255,255,255,0.5); margin-bottom:0.75rem; }
+.ai-tools { display:flex; flex-wrap:wrap; gap:0.3rem; justify-content:center; }
+.ai-tool {
+  font-family:'JetBrains Mono',monospace; font-size:0.65rem;
+  padding:0.2rem 0.5rem; border-radius:4px;
+  background:rgba(224,92,0,0.15); color:var(--orange2); border:1px solid rgba(224,92,0,0.2);
 }
 
-</body>
-</html>
+/* ── DELIVERABLES ────────────────────────────────── */
+#entregables { background:var(--ink); }
+.del-timeline { display:flex; flex-direction:column; gap:0; margin-top:2.5rem; position:relative; }
+.del-timeline::before {
+  content:''; position:absolute; left:28px; top:0; bottom:0; width:2px;
+  background:linear-gradient(180deg,var(--orange),var(--orange2),#FFB347,var(--green2),#4A90E2);
+}
+.del-item { display:flex; gap:1.5rem; padding:1.5rem 1.5rem 1.5rem 0; position:relative; }
+.del-dot {
+  width:58px; height:58px; border-radius:14px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:1.5rem; position:relative; z-index:1; border:2px solid;
+}
+.dd1 { background:rgba(224,92,0,0.15); border-color:var(--orange); }
+.dd2 { background:rgba(18,189,120,0.12); border-color:var(--green2); }
+.dd3 { background:rgba(176,126,234,0.12); border-color:#B07EEA; }
+.dd4 { background:rgba(224,92,0,0.15); border-color:var(--orange2); }
+.dd5 { background:rgba(74,144,226,0.15); border-color:#4A90E2; }
+.del-body { flex:1; padding-top:0.6rem; }
+.del-mod { font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:var(--orange2); margin-bottom:0.3rem; text-transform:uppercase; letter-spacing:0.08em; }
+.del-body h3 { font-family:'Syne',sans-serif; font-size:1.05rem; font-weight:700; margin-bottom:0.4rem; }
+.del-body p { font-size:0.85rem; line-height:1.65; color:rgba(255,255,255,0.5); }
+.del-highlight {
+  display:inline-flex; align-items:center; gap:0.4rem;
+  margin-top:0.6rem; padding:0.3rem 0.75rem;
+  background:rgba(18,189,120,0.1); border:1px solid rgba(18,189,120,0.2);
+  border-radius:100px; font-size:0.75rem; color:var(--green2); font-weight:600;
+}
+
+/* ── CIERRE ──────────────────────────────────────── */
+#cierre {
+  background:radial-gradient(ellipse at 50% 0%, rgba(224,92,0,0.15) 0%, transparent 60%), var(--ink);
+  text-align:center; padding:120px 0;
+}
+.cierre-inner { max-width:700px; margin:0 auto; padding:0 2.5rem; }
+.cierre-badge {
+  display:inline-block; padding:0.4rem 1rem;
+  background:rgba(224,92,0,0.12); border:1px solid rgba(224,92,0,0.3);
+  border-radius:100px; font-size:0.75rem; font-weight:700; color:var(--orange2);
+  letter-spacing:0.08em; text-transform:uppercase; margin-bottom:2rem;
+}
+.cierre-title {
+  font-family:'Syne',sans-serif; font-size:clamp(2.5rem,5vw,3.8rem); font-weight:800;
+  line-height:1.1; margin-bottom:1.5rem; color:var(--white);
+}
+.cierre-title em { font-style:normal; color:var(--orange2); }
+.cierre-sub {
+  font-size:1rem; line-height:1.8; color:rgba(255,255,255,0.55);
+  margin-bottom:1.5rem;
+}
+.cierre-author { font-size:0.85rem; color:rgba(255,255,255,0.3); margin-bottom:2.5rem; }
+.btn-group { display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; margin-bottom:3rem; }
+.btn-primary-o {
+  padding:0.9rem 2rem; background:var(--orange); color:white;
+  border:none; border-radius:10px; font-weight:700; font-size:0.9rem;
+  cursor:pointer; text-decoration:none; transition:all 0.3s;
+}
+.btn-primary-o:hover { background:var(--orange2); transform:translateY(-2px); box-shadow:0 12px 32px rgba(224,92,0,0.4); }
+.btn-ghost {
+  padding:0.9rem 2rem; background:transparent; color:rgba(255,255,255,0.7);
+  border:1px solid rgba(255,255,255,0.2); border-radius:10px; font-weight:600;
+  font-size:0.9rem; cursor:pointer; text-decoration:none; transition:all 0.3s;
+}
+.btn-ghost:hover { border-color:rgba(255,255,255,0.5); color:white; }
+
+/* ── FIRMA ────────────────────────────────────────── */
+.firma-block {
+  margin-top:2rem; padding:1.5rem 2rem;
+  background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08);
+  border-radius:14px; display:inline-block; text-align:left;
+}
+.firma-block .firma-top {
+  font-family:'JetBrains Mono',monospace; font-size:0.7rem;
+  color:var(--orange2); display:flex; align-items:center; gap:0.5rem; margin-bottom:0.5rem;
+}
+.firma-block .firma-name {
+  font-family:'Syne',sans-serif; font-size:1rem; font-weight:800; color:var(--white);
+}
+.firma-block .firma-name span { color:var(--orange2); }
+.firma-block .firma-title { font-size:0.82rem; color:rgba(255,255,255,0.5); margin-top:0.2rem; }
+
+/* ── FOOTER ──────────────────────────────────────── */
+footer {
+  padding:2rem 2.5rem; border-top:1px solid rgba(255,255,255,0.06);
+  display:flex; justify-content:space-between; align-items:center;
+  font-size:0.8rem; color:rgba(255,255,255,0.25); flex-wrap:wrap; gap:1rem;
+}
+.footer-links { display:flex; gap:1.5rem; }
+.footer-links a { color:rgba(255,255,255,0.3); text-decoration:none; transition:color 0.2s; }
+.footer-links a:hover { color:var(--orange2); }
+
+/* ── SCROLL TOP ──────────────────────────────────── */
+.scrolltop {
+  position:fixed; bottom:2rem; right:2rem; z-index:99;
+  width:40px; height:40px; border-radius:10px; border:1px solid rgba(255,255,255,0.1);
+  background:rgba(15,15,26,0.9); color:rgba(255,255,255,0.5);
+  cursor:pointer; font-size:1rem; display:none; transition:all 0.2s;
+}
+.scrolltop.show { display:flex; align-items:center; justify-content:center; }
+.scrolltop:hover { background:var(--orange); color:white; border-color:var(--orange); }
+
+/* ── RESPONSIVE ──────────────────────────────────── */
+@media(max-width:900px) {
+  .hero-floating { display:none; }
+  .why-grid, .profiles-grid { grid-template-columns:1fr; }
+  .mod-panel.active { grid-template-columns:1fr; }
+  .ai-grid { grid-template-columns:repeat(2,1fr); }
+  .nav-pills { display:none; }
+  .themes-list { grid-template-columns:1fr; }
+  .hero-stats { gap:0.75rem; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand"><div class="nav-dot"></div>IA × Emprendedores</div>
+  <ul class="nav-pills">
+    <li><a href="#hero">Inicio</a></li>
+    <li><a href="#por-que">¿Por qué?</a></li>
+    <li><a href="#perfiles">Perfil</a></li>
+    <li><a href="#modulos">Módulos</a></li>
+    <li><a href="#ia-transversal">IA</a></li>
+    <li><a href="#entregables">Entregables</a></li>
+    <li><a href="#cierre">Cierre</a></li>
+  </ul>
+</nav>
+<div class="prog-wrap"><div class="prog-bar" id="prog"></div></div>
+
+<!-- ═══ HERO ═════════════════════════════════════════════ -->
+<section id="hero">
+  <div class="hero-noise"></div>
+  <div class="hero-container">
+    <div class="hero-chip">
+      <span class="hero-chip-badge">NUEVO</span>
+      Fase 1 — Primera Edición · Programa de Emprendimiento con IA
+    </div>
+    <h1 class="hero-headline">
+      <span class="l1">IA Intensiva</span>
+      <span class="l2">para Emprendedores</span>
+      <span class="l3">Del Proceso al Negocio Inteligente</span>
+    </h1>
+    <p class="hero-desc">
+      Un programa de <strong>20 horas en 2.5 días</strong> que lleva al emprendedor desde la validación de sus procesos hasta tener herramientas de Inteligencia Artificial funcionando en su negocio. <strong>Diseñado para cualquier etapa. Enfocado en resultados reales.</strong>
+    </p>
+    <div class="hero-stats">
+      <div class="stat"><span class="stat-val">20h</span><span class="stat-label">2.5 Días Intensivos</span></div>
+      <div class="stat"><span class="stat-val">5</span><span class="stat-label">Módulos Progresivos</span></div>
+      <div class="stat"><span class="stat-val">12+</span><span class="stat-label">Herramientas de IA</span></div>
+      <div class="stat"><span class="stat-val">5</span><span class="stat-label">Entregables Reales</span></div>
+    </div>
+    <a href="#modulos" class="hero-btn">Ver el programa completo →</a>
+  </div>
+  <div class="hero-floating">
+    <div class="float-card"><span class="float-icon">🗺</span><div><strong>Módulo 1 — Validación</strong>Mapa de procesos + diagnóstico del modelo</div></div>
+    <div class="float-card"><span class="float-icon">💼</span><div><strong>Módulo 2 — Comercial</strong>Pitch + primeros clientes + marketing digital</div></div>
+    <div class="float-card"><span class="float-icon">⚡</span><div><strong>Módulo 3 — Automatización</strong>3 flujos automatizados activados</div></div>
+    <div class="float-card"><span class="float-icon">🤖</span><div><strong>Módulo 4 — IA Funcional</strong>3 herramientas de IA en tu negocio HOY</div></div>
+    <div class="float-card"><span class="float-icon">🚀</span><div><strong>Módulo 5 — Escala Digital</strong>Estrategia de crecimiento con IA activa</div></div>
+  </div>
+</section>
+
+<!-- ═══ POR QUÉ ═══════════════════════════════════════════ -->
+<section id="por-que">
+  <div class="container">
+    <p class="sec-label reveal">Contexto y problema</p>
+    <h2 class="sec-title reveal rd1">El orden importa. <em>Mucho.</em></h2>
+    <p class="sec-body reveal rd2">La mayoría de emprendedores cometen el mismo error: invierten en marketing antes de tener un proceso, o adoptan IA antes de validar que su negocio funciona. Este programa corrige ese orden.</p>
+    <div class="why-grid">
+      <div class="why-card reveal">
+        <div class="why-num">// 01</div>
+        <h3>El 70% de los emprendimientos no supera los 5 años</h3>
+        <p>La causa principal no es la falta de ideas ni de trabajo duro. Es la falta de validación de procesos antes de escalar.</p>
+      </div>
+      <div class="why-card reveal rd1">
+        <div class="why-num">// 02</div>
+        <h3>Automatizar un proceso roto solo acelera el caos</h3>
+        <p>La IA no arregla procesos deficientes — los magnifica. Por eso este programa empieza por donde debe: el proceso.</p>
+      </div>
+      <div class="why-card reveal rd2">
+        <div class="why-num">// 03</div>
+        <h3>El proceso comercial es el músculo que hace sobrevivir al negocio</h3>
+        <p>Antes de escalar necesitas un pitch que funciona, claridad sobre tu cliente ideal y al menos una forma sistemática de conseguir clientes.</p>
+      </div>
+      <div class="why-card reveal rd3">
+        <div class="why-num">// 04</div>
+        <h3>Este es un programa nuevo — y eso es una ventaja</h3>
+        <p>Primera edición significa energía, disposición de ajustar en tiempo real y el privilegio de ser co-creador de algo que moldeará muchos negocios.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PERFILES ═══════════════════════════════════════════ -->
+<section id="perfiles">
+  <div class="container">
+    <p class="sec-label reveal">¿Para quién es?</p>
+    <h2 class="sec-title reveal rd1">Un programa para <em>cualquier etapa</em></h2>
+    <p class="sec-body reveal rd2">No importa si tienes la idea, el negocio funcionando sin estructura o ventas sin sistema. El enfoque es el proceso, no el nivel.</p>
+    <div class="profiles-grid">
+      <div class="profile-card p1 reveal">
+        <div class="profile-emoji">🌱</div>
+        <h3><span>Etapa Temprana</span>El Fundador</h3>
+        <p>Tienes la idea o el MVP. Necesitas validar que tiene sentido de negocio antes de invertir más tiempo y dinero. El Módulo 1 fue diseñado para ti.</p>
+      </div>
+      <div class="profile-card p2 reveal rd1">
+        <div class="profile-emoji">⚙️</div>
+        <h3><span>En Operación</span>El Operador</h3>
+        <p>Tu negocio ya funciona pero depende de ti para todo. No escala porque no hay procesos documentados ni automatizaciones. El Módulo 3 transforma eso.</p>
+      </div>
+      <div class="profile-card p3 reveal rd2">
+        <div class="profile-emoji">📈</div>
+        <h3><span>Queriendo Escalar</span>El Escalador</h3>
+        <p>Tienes ventas pero no sistema. Quieres crecer sin que todo colapse. Los Módulos 2, 4 y 5 te dan las herramientas para hacerlo inteligentemente.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ MÓDULOS ═══════════════════════════════════════════ -->
+<section id="modulos">
+  <div class="container">
+    <p class="sec-label reveal">Contenido curricular</p>
+    <h2 class="sec-title reveal rd1"><em>5 Módulos</em> · 20 horas · 2.5 días</h2>
+
+    <div class="mod-nav reveal rd2">
+      <button class="mod-tab active" onclick="showMod('m1',this)"><span class="tab-day">Día 1 · Mañana</span>Módulo 1<br>Validación de Procesos</button>
+      <button class="mod-tab" onclick="showMod('m2',this)"><span class="tab-day">Día 1 · Tarde</span>Módulo 2<br>Proceso Comercial</button>
+      <button class="mod-tab" onclick="showMod('m3',this)"><span class="tab-day">Día 2 · Mañana</span>Módulo 3<br>Automatización</button>
+      <button class="mod-tab" onclick="showMod('m4',this)"><span class="tab-day">Día 2 · Tarde</span>Módulo 4<br>IA Protagonista</button>
+      <button class="mod-tab" onclick="showMod('m5',this)"><span class="tab-day">Día 3 · Mañana</span>Módulo 5<br>Escala Digital</button>
+    </div>
+
+    <!-- M1 -->
+    <div class="mod-panel m1 active" id="panel-m1">
+      <div class="mod-left">
+        <div class="big-num">01</div>
+        <div>
+          <h2>Validación de Procesos y Modelo de Negocio</h2>
+          <div class="schedule">Día 1 · 8:00 AM – 12:00 PM</div>
+          <div class="mod-hours-badge">⏱ 4 horas</div>
+        </div>
+      </div>
+      <div class="mod-right">
+        <p class="mod-obj">Antes de invertir en marketing o tecnología, el emprendedor necesita saber qué está funcionando realmente en su negocio y qué no. Este módulo construye esa claridad de forma rápida y práctica.</p>
+        <div class="themes-list">
+          <div class="theme-row"><span class="tdot"></span>Canvas de negocio express: propuesta de valor real vs. percibida</div>
+          <div class="theme-row"><span class="tdot"></span>Mapeo de procesos críticos: flujo de cliente, operación y cobro</div>
+          <div class="theme-row"><span class="tdot"></span>Diagnóstico de cuellos de botella con herramienta visual simple</div>
+          <div class="theme-row"><span class="tdot"></span>Indicadores básicos: ¿sabes si tu negocio es rentable hoy?</div>
+          <div class="theme-row"><span class="tdot"></span>Modelo de negocio revisado: ¿tienes el cliente correcto?</div>
+          <div class="theme-row"><span class="tdot"></span>IA aplicada: usar Claude/ChatGPT para analizar tu modelo en tiempo real</div>
+        </div>
+        <div class="mod-deliverable">
+          <div class="mod-deliverable-icon">🗺</div>
+          <div class="mod-deliverable-text">
+            <h4>Entregable del módulo</h4>
+            <p>Mapa de procesos críticos + diagnóstico completo del modelo de negocio listo para tomar decisiones de inversión y mejora.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- M2 -->
+    <div class="mod-panel m2" id="panel-m2">
+      <div class="mod-left">
+        <div class="big-num">02</div>
+        <div>
+          <h2>El Proceso Comercial que Hace Sobrevivir al Negocio</h2>
+          <div class="schedule">Día 1 · 1:00 PM – 5:00 PM</div>
+          <div class="mod-hours-badge">⏱ 4 horas</div>
+        </div>
+      </div>
+      <div class="mod-right">
+        <p class="mod-obj">No hay negocio sin clientes. Este módulo construye el músculo comercial desde la definición del cliente ideal hasta el pitch y las acciones de marketing digital que funcionan sin presupuesto.</p>
+        <div class="themes-list">
+          <div class="theme-row"><span class="tdot"></span>Perfil detallado del cliente ideal con ayuda de IA</div>
+          <div class="theme-row"><span class="tdot"></span>Cómo conseguir los primeros 10 clientes sin presupuesto de pauta</div>
+          <div class="theme-row"><span class="tdot"></span>Estructura del pitch de ventas: problema → solución → prueba → cierre</div>
+          <div class="theme-row"><span class="tdot"></span>Fundamentos de marketing digital: redes, contenido orgánico y SEO básico</div>
+          <div class="theme-row"><span class="tdot"></span>WhatsApp Business y herramientas gratuitas de captación de leads</div>
+          <div class="theme-row"><span class="tdot"></span>IA aplicada: generar scripts de venta, posts y propuestas con IA</div>
+        </div>
+        <div class="mod-deliverable">
+          <div class="mod-deliverable-icon">💼</div>
+          <div class="mod-deliverable-text">
+            <h4>Entregable del módulo</h4>
+            <p>Pitch estructurado + Plan de 30 días con acciones concretas para conseguir los primeros clientes o reactivar los actuales.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- M3 -->
+    <div class="mod-panel m3" id="panel-m3">
+      <div class="mod-left">
+        <div class="big-num">03</div>
+        <div>
+          <h2>Automatización Inteligente: Recupera tu Tiempo</h2>
+          <div class="schedule">Día 2 · 8:00 AM – 12:00 PM</div>
+          <div class="mod-hours-badge">⏱ 4 horas</div>
+        </div>
+      </div>
+      <div class="mod-right">
+        <p class="mod-obj">Solo se automatiza lo que ya funciona. Este módulo enseña a identificar las tareas que más tiempo consumen y a implementar herramientas gratuitas o de bajo costo para recuperar horas cada semana.</p>
+        <div class="themes-list">
+          <div class="theme-row"><span class="tdot"></span>¿Qué es automatizar y por qué hacerlo DESPUÉS de validar?</div>
+          <div class="theme-row"><span class="tdot"></span>Inventario de tareas repetitivas: cuáles te cuestan más tiempo y dinero</div>
+          <div class="theme-row"><span class="tdot"></span>Herramientas gratuitas o low-cost: Make, Zapier, Notion, Calendly</div>
+          <div class="theme-row"><span class="tdot"></span>Automatización de respuestas, seguimiento y facturación básica</div>
+          <div class="theme-row"><span class="tdot"></span>CRM sencillo para emprendedores: opciones reales y accesibles</div>
+          <div class="theme-row"><span class="tdot"></span>IA aplicada: flujos de automatización con IA como primer paso</div>
+        </div>
+        <div class="mod-deliverable">
+          <div class="mod-deliverable-icon">⚡</div>
+          <div class="mod-deliverable-text">
+            <h4>Entregable del módulo</h4>
+            <p>Mapa de automatización priorizado + 3 flujos automatizados activados y funcionando durante el taller.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- M4 -->
+    <div class="mod-panel m4" id="panel-m4">
+      <div class="mod-left">
+        <div class="big-num">04</div>
+        <div>
+          <h2>IA Funcional para Emprendedores — Herramientas Reales HOY</h2>
+          <div class="schedule">Día 2 · 1:00 PM – 5:00 PM</div>
+          <div class="mod-hours-badge">⏱ 4 horas</div>
+        </div>
+      </div>
+      <div class="mod-right">
+        <p class="mod-obj">El módulo protagonista. No es teoría sobre IA — es la configuración real, en tiempo de taller, de herramientas que el emprendedor llevará funcionando en su negocio desde el día siguiente.</p>
+        <div class="themes-list">
+          <div class="theme-row"><span class="tdot"></span>Ecosistema de IA para emprendedores: qué existe y qué sirve HOY</div>
+          <div class="theme-row"><span class="tdot"></span>ChatGPT y Claude: productividad, contenido y atención al cliente</div>
+          <div class="theme-row"><span class="tdot"></span>Generación de imágenes para redes: DALL-E, Canva AI, Napkin.ai</div>
+          <div class="theme-row"><span class="tdot"></span>Chatbot propio con Chatbase — activado durante el taller</div>
+          <div class="theme-row"><span class="tdot"></span>Gamma.app: presentaciones y propuestas comerciales en minutos</div>
+          <div class="theme-row"><span class="tdot"></span>ElevenLabs y HeyGen: audio y video corto para redes sociales</div>
+        </div>
+        <div class="mod-deliverable">
+          <div class="mod-deliverable-icon">🤖</div>
+          <div class="mod-deliverable-text">
+            <h4>Entregable del módulo</h4>
+            <p>3 herramientas de IA configuradas y funcionando: chatbot propio, generador de contenido y al menos una automatización con IA activa.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- M5 -->
+    <div class="mod-panel m5" id="panel-m5">
+      <div class="mod-left">
+        <div class="big-num">05</div>
+        <div>
+          <h2>Escala Digital: Estrategia de Crecimiento con IA</h2>
+          <div class="schedule">Día 3 · 8:00 AM – 12:00 PM</div>
+          <div class="mod-hours-badge">⏱ 4 horas</div>
+        </div>
+      </div>
+      <div class="mod-right">
+        <p class="mod-obj">El cierre del ciclo. Con procesos validados, sistema comercial activo, automatizaciones funcionando e IA integrada, este módulo diseña la hoja de ruta de crecimiento sostenible del negocio.</p>
+        <div class="themes-list">
+          <div class="theme-row"><span class="tdot"></span>Del negocio artesanal al negocio digital escalable</div>
+          <div class="theme-row"><span class="tdot"></span>Métricas que importan: cómo medir crecimiento real</div>
+          <div class="theme-row"><span class="tdot"></span>Canales de adquisición digital: cuál elegir según tu etapa</div>
+          <div class="theme-row"><span class="tdot"></span>Construcción de comunidad y marca personal con IA</div>
+          <div class="theme-row"><span class="tdot"></span>Plan de 90 días: acciones, recursos y prioridades</div>
+          <div class="theme-row"><span class="tdot"></span>IA como socio estratégico: integración continua post-taller</div>
+        </div>
+        <div class="mod-deliverable">
+          <div class="mod-deliverable-icon">🚀</div>
+          <div class="mod-deliverable-text">
+            <h4>Entregable del módulo</h4>
+            <p>Hoja de ruta de crecimiento a 90 días + stack digital del negocio definido + plan de contenido con IA para los próximos 30 días.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══ IA TRANSVERSAL ══════════════════════════════════ -->
+<section id="ia-transversal">
+  <div class="container">
+    <p class="sec-label reveal">Hilo conductor del programa</p>
+    <h2 class="sec-title reveal rd1">La IA es <em>transversal</em>, no un tema final</h2>
+    <p class="sec-body reveal rd2">La Inteligencia Artificial aparece en cada módulo como aliada práctica. No esperamos al Módulo 4 para presentarla — la integramos desde el primer minuto del Día 1.</p>
+    <div class="ai-grid">
+      <div class="ai-card reveal">
+        <div class="ai-card-icon">🔍</div>
+        <h3>M1 — Procesos</h3>
+        <p>Analizar modelo de negocio, detectar inconsistencias y generar preguntas de diagnóstico estratégico</p>
+        <div class="ai-tools"><span class="ai-tool">Claude</span><span class="ai-tool">ChatGPT</span></div>
+      </div>
+      <div class="ai-card reveal rd1">
+        <div class="ai-card-icon">💬</div>
+        <h3>M2 — Comercial</h3>
+        <p>Crear perfiles de cliente, generar scripts de venta, redactar posts y propuestas comerciales</p>
+        <div class="ai-tools"><span class="ai-tool">ChatGPT</span><span class="ai-tool">Canva AI</span><span class="ai-tool">Gamma</span></div>
+      </div>
+      <div class="ai-card reveal rd2">
+        <div class="ai-card-icon">⚙️</div>
+        <h3>M3 — Automatización</h3>
+        <p>Diseñar flujos y documentar procesos antes de implementar con herramientas de bajo costo</p>
+        <div class="ai-tools"><span class="ai-tool">Make+AI</span><span class="ai-tool">Zapier</span></div>
+      </div>
+      <div class="ai-card reveal rd3">
+        <div class="ai-card-icon">🚀</div>
+        <h3>M4 — IA Protagonista</h3>
+        <p>Chatbot propio, generación visual, video con IA y automatización de respuestas al cliente</p>
+        <div class="ai-tools"><span class="ai-tool">Chatbase</span><span class="ai-tool">DALL-E</span><span class="ai-tool">ElevenLabs</span><span class="ai-tool">HeyGen</span></div>
+      </div>
+      <div class="ai-card reveal" style="transition-delay:0.4s">
+        <div class="ai-card-icon">📊</div>
+        <h3>M5 — Escala</h3>
+        <p>Definir métricas, construir audiencia digital y diseñar hoja de ruta de crecimiento con IA</p>
+        <div class="ai-tools"><span class="ai-tool">Claude</span><span class="ai-tool">Gemini</span><span class="ai-tool">Perplexity</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ ENTREGABLES ═════════════════════════════════════ -->
+<section id="entregables">
+  <div class="container">
+    <p class="sec-label reveal">Lo que te llevas</p>
+    <h2 class="sec-title reveal rd1">5 entregables <em>reales</em> en 2.5 días</h2>
+    <p class="sec-body reveal rd2">No hay ejercicios abstractos. Cada módulo termina con algo concreto, funcional y listo para usar en el negocio propio del participante.</p>
+    <div class="del-timeline">
+      <div class="del-item reveal">
+        <div class="del-dot dd1">🗺</div>
+        <div class="del-body">
+          <div class="del-mod">// Módulo 1</div>
+          <h3>Mapa de Procesos + Diagnóstico del Modelo de Negocio</h3>
+          <p>Un documento visual que muestra exactamente qué procesos tiene el negocio, cuáles funcionan y cuáles son cuellos de botella que frenan el crecimiento.</p>
+          <span class="del-highlight">✓ Listo para tomar decisiones de inversión</span>
+        </div>
+      </div>
+      <div class="del-item reveal rd1">
+        <div class="del-dot dd2">💼</div>
+        <div class="del-body">
+          <div class="del-mod">// Módulo 2</div>
+          <h3>Pitch Estructurado + Plan de 30 Días para Primeros Clientes</h3>
+          <p>Un pitch de ventas claro y practicado, más un plan de acción concreto para los próximos 30 días con acciones específicas, gratuitas o de bajo costo.</p>
+          <span class="del-highlight">✓ Accionable desde el día siguiente</span>
+        </div>
+      </div>
+      <div class="del-item reveal rd2">
+        <div class="del-dot dd3">⚡</div>
+        <div class="del-body">
+          <div class="del-mod">// Módulo 3</div>
+          <h3>Mapa de Automatización + 3 Flujos Activados</h3>
+          <p>El inventario de tareas repetitivas del negocio priorizado por impacto, más tres automatizaciones reales configuradas y activadas durante el taller.</p>
+          <span class="del-highlight">✓ Ahorrando tiempo desde el lunes siguiente</span>
+        </div>
+      </div>
+      <div class="del-item reveal rd3">
+        <div class="del-dot dd4">🤖</div>
+        <div class="del-body">
+          <div class="del-mod">// Módulo 4</div>
+          <h3>3 Herramientas de IA Configuradas y Funcionando en el Negocio</h3>
+          <p>Un chatbot propio activo, un generador de contenido de redes configurado con la voz del negocio, y una automatización con IA para respuestas.</p>
+          <span class="del-highlight">✓ IA trabajando en tu negocio desde mañana</span>
+        </div>
+      </div>
+      <div class="del-item reveal" style="transition-delay:0.4s">
+        <div class="del-dot dd5">🚀</div>
+        <div class="del-body">
+          <div class="del-mod">// Módulo 5</div>
+          <h3>Hoja de Ruta de Crecimiento a 90 Días</h3>
+          <p>Un plan estratégico personalizado con canales, métricas, stack digital definido y plan de contenido con IA para los próximos 30 días.</p>
+          <span class="del-highlight">✓ Estrategia clara para escalar con sistema</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CIERRE ══════════════════════════════════════════ -->
+<section id="cierre">
+  <div class="container cierre-inner">
+    <div class="cierre-badge reveal">🔥 Primera Edición — Sé parte del origen</div>
+    <h2 class="cierre-title reveal rd1">
+      Tu negocio merece<br>procesos <em>inteligentes</em>
+    </h2>
+    <p class="cierre-sub reveal rd2">
+      Primero validamos. Luego vendemos. Luego automatizamos. Luego la IA potencia todo. Luego escalamos con sistema.
+      Este es el orden correcto — y este programa lo enseña en 20 horas.
+    </p>
+    <div class="btn-group reveal">
+      <a href="mailto:info@programaia.co" class="btn-primary-o">Inscribirme en la Fase 1 ✉</a>
+      <a href="https://p140a8bbnfd0-d.space.z.ai" target="_blank" class="btn-ghost">Ver perfil docente</a>
+    </div>
+
+    <!-- FIRMA JORGE HUGO -->
+    <div class="firma-block reveal rd1">
+      <div class="firma-top">✦ Desarrollado por:</div>
+      <div class="firma-name"><span>In</span>geniero Jorge Hugo Perez</div>
+      <div class="firma-title">Consultor y Mentor IA &amp; Grow Marketing</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>© 2025 · Programa de Emprendimiento con IA · Fase 1</p>
+  <div class="footer-links">
+    <a href="https://p140a8bbnfd0-d.space.z.ai" target="_blank">Ver perfil docente</a>
+  </div>
+</footer>
+
+<button class="scrolltop" id="scrolltop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// TABS — completamente reconstruido
+function showMod(id, btn) {
+  document.querySelectorAll('.mod-panel').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.mod-tab').forEach(function(b){ b.classList.remove('active'); });
+  var panel = document.getElementById('panel-' + id);
+  if (panel) panel.classList.add('active');
+  if (btn) btn.classList.add('active');
+}
+
+// PROGRESS BAR + SCROLL TOP + ACTIVE NAV
+var prog = document.getElementById('prog');
+var st = document.getElementById('scrolltop');
+var sections = document.querySelectorAll('section[id]');
+var navLinks = document.querySelectorAll('.nav-pills a');
+
+window.addEventListener('scroll', function(){
+  var scrolled = window.scrollY;
+  var total = document.documentElement.scrollHeight - window.innerHeight;
+  if (prog) prog.style.width = (scrolled / total * 100) + '%';
+  if (st) st.classList.toggle('show', scrolled > 400);
+  var cur = '';
+  sections.forEach(function(s){
+    if (scrolled >= s.offsetTop - 100) cur = s.id;
+  });
+  navLinks.forEach(function(a){
+    a.classList.toggle('active', a.getAttribute('href') === '#' + cur);
+  });
+});
+
+// REVEAL ON SCROLL
+var reveals = document.querySelectorAll('.reveal');
+var observer = new IntersectionObserver(function(entries){
+  entries.forEach(function(e){
+    if (e.isIntersecting) e.target.class
