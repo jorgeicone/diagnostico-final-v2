@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagn&#243;stico &#183; Modo Emprendedor &#183; Ecosistema IA</title>
+<style>
+:root {
+  --bg: #060b18;
+  --surface: #0d1526;
+  --surface2: #131f35;
+  --surface3: #1a2845;
+  --border: #1e3050;
+  --border2: #253a5e;
+  --accent: #00d4ff;
+  --accent2: #7c3aed;
+  --accent3: #10b981;
+  --gold: #f59e0b;
+  --pink: #ec4899;
+  --danger: #ef4444;
+  --text: #e2e8f0;
+  --text-muted: #7a93b4;
+  --text-dim: #3d5272;
+  --r: 18px;
+  --shadow: 0 8px 40px rgba(0,0,0,0.5);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Inter','Segoe UI',system-ui,sans-serif;min-height:100vh;overflow-x:hidden}
+
+/* NOISE + GRID BG */
+body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(rgba(0,212,255,0.04) 1px,transparent 1px);background-size:32px 32px;pointer-events:none;z-index:0}
+body::after{content:'';position:fixed;top:-200px;right:-200px;width:800px;height:800px;background:radial-gradient(circle,rgba(124,58,237,0.07) 0%,transparent 65%);pointer-events:none;z-index:0}
+.glow-left{position:fixed;bottom:-100px;left:-100px;width:600px;height:600px;background:radial-gradient(circle,rgba(0,212,255,0.05) 0%,transparent 65%);pointer-events:none;z-index:0}
+
+.wrap{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:2rem 1.25rem 4rem}
+
+/* SCREENS */
+.screen{display:none;animation:fadeUp .45s ease}
+.screen.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* ===== HEADER ===== */
+.header{text-align:center;padding:1.5rem 0 2rem}
+.brand-chip{display:inline-flex;align-items:center;gap:8px;background:rgba(0,212,255,0.07);border:1px solid rgba(0,212,255,0.18);border-radius:50px;padding:7px 18px;font-size:.72rem;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;font-weight:700;margin-bottom:1.5rem}
+.brand-dot{width:7px;height:7px;background:var(--accent);border-radius:50%;animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.6)}}
+
+/* ===== WELCOME ===== */
+.welcome-hero{position:relative;border-radius:24px;overflow:hidden;margin-bottom:1.5rem}
+.welcome-hero-img{width:100%;height:260px;display:block}
+.welcome-hero-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(6,11,24,.7) 0%,rgba(124,58,237,.15) 100%)}
+.welcome-hero-content{position:absolute;bottom:0;left:0;right:0;padding:2rem 2.5rem}
+.welcome-title{font-size:2.4rem;font-weight:900;background:linear-gradient(135deg,#fff 30%,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.15;margin-bottom:.5rem}
+.welcome-sub{color:var(--accent);font-size:.95rem;font-weight:600;letter-spacing:.03em}
+.welcome-body{background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:2rem 2.5rem}
+.welcome-desc{color:var(--text-muted);line-height:1.75;font-size:.93rem;margin-bottom:1.75rem;max-width:580px}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin-bottom:2rem}
+.stat-box{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:.9rem;text-align:center}
+.stat-num{font-size:1.6rem;font-weight:900;color:var(--accent)}
+.stat-lbl{font-size:.68rem;color:var(--text-muted);margin-top:2px;text-transform:uppercase;letter-spacing:.06em}
+.name-field label{display:block;font-size:.75rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.5rem}
+.name-field input{width:100%;max-width:420px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);padding:.85rem 1rem;font-size:.95rem;outline:none;transition:all .2s}
+.name-field input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,212,255,.1)}
+.name-field input::placeholder{color:var(--text-dim)}
+
+/* ===== BUTTONS ===== */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:.85rem 1.75rem;border-radius:10px;font-size:.88rem;font-weight:700;cursor:pointer;border:none;transition:all .2s;letter-spacing:.02em;text-decoration:none}
+.btn-primary{background:linear-gradient(135deg,var(--accent),#0099cc);color:#000;box-shadow:0 4px 20px rgba(0,212,255,.3)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,212,255,.45)}
+.btn-secondary{background:var(--surface2);color:var(--text-muted);border:1px solid var(--border)}
+.btn-secondary:hover{border-color:var(--border2);color:var(--text)}
+.btn-ghost{background:transparent;color:var(--text-muted);border:1px solid var(--border)}
+.btn-ghost:hover{background:var(--surface2)}
+.btn-purple{background:linear-gradient(135deg,var(--accent2),#5b21b6);color:#fff;box-shadow:0 4px 20px rgba(124,58,237,.3)}
+.btn-purple:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(124,58,237,.45)}
+.btn-green{background:linear-gradient(135deg,var(--accent3),#059669);color:#000;box-shadow:0 4px 20px rgba(16,185,129,.3)}
+.btn-lg{padding:1rem 2.25rem;font-size:.95rem;border-radius:12px}
+.btn:disabled{opacity:.35;cursor:not-allowed;transform:none!important}
+.mt1{margin-top:1rem}
+
+/* ===== QUESTIONS ===== */
+.q-header{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.2rem 1.5rem;margin-bottom:1.25rem}
+.q-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:.6rem}
+.q-label{font-size:.75rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:.08em}
+.q-counter{font-size:.85rem;font-weight:800;color:var(--accent)}
+.prog-track{background:var(--surface2);border-radius:50px;height:5px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:50px;transition:width .4s cubic-bezier(.4,0,.2,1)}
+.cat-pill{display:inline-block;padding:3px 12px;border-radius:50px;font-size:.68rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin-top:.6rem}
+
+.q-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:2rem 1.75rem 1.75rem;margin-bottom:1.25rem;position:relative;overflow:hidden}
+.q-card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--cat-color,var(--accent))}
+.q-num{font-size:.68rem;color:var(--text-muted);font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.5rem;padding-left:.5rem}
+.q-text{font-size:1.05rem;font-weight:700;color:var(--text);line-height:1.5;margin-bottom:1.4rem;padding-left:.5rem}
+.options{display:flex;flex-direction:column;gap:.55rem}
+.opt{display:flex;align-items:flex-start;gap:12px;padding:.85rem 1rem;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:all .18s}
+.opt:hover{border-color:rgba(0,212,255,.35);background:rgba(0,212,255,.04)}
+.opt.sel{border-color:var(--cat-color,var(--accent));background:rgba(0,212,255,.07)}
+.opt input{display:none}
+.opt-marker{width:26px;height:26px;min-width:26px;border-radius:50%;border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:800;color:var(--text-muted);transition:all .18s;margin-top:1px}
+.opt.sel .opt-marker{background:var(--cat-color,var(--accent));border-color:var(--cat-color,var(--accent));color:#000}
+.opt-text{font-size:.86rem;color:var(--text-muted);line-height:1.5;transition:color .18s}
+.opt.sel .opt-text{color:var(--text)}
+.nav-row{display:flex;gap:1rem;justify-content:space-between;align-items:center}
+
+/* ===== RESULTS ===== */
+/* Hero */
+.res-hero{position:relative;border-radius:24px;overflow:hidden;margin-bottom:1.25rem}
+.res-hero-img{width:100%;height:220px;display:block}
+.res-hero-grad{position:absolute;inset:0;background:linear-gradient(135deg,rgba(6,11,24,.85),rgba(0,0,0,.4))}
+.res-hero-content{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:2rem}
+.res-name{font-size:.72rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.15em;margin-bottom:.5rem}
+.level-pill{display:inline-flex;align-items:center;gap:6px;padding:6px 16px;border-radius:50px;font-size:.8rem;font-weight:800;margin-bottom:.75rem;letter-spacing:.03em}
+.l-inicial{background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.3)}
+.l-intermedio{background:rgba(245,158,11,.15);color:#fbbf24;border:1px solid rgba(245,158,11,.3)}
+.l-experto{background:rgba(16,185,129,.15);color:#34d399;border:1px solid rgba(16,185,129,.3)}
+.res-title{font-size:2rem;font-weight:900;color:#fff;margin-bottom:.4rem}
+.res-score-big{font-size:3.5rem;font-weight:900;line-height:1;letter-spacing:-.02em}
+.res-score-label{font-size:.75rem;color:var(--text-muted);margin-top:2px}
+
+/* Score ring row */
+.score-area{display:grid;grid-template-columns:180px 1fr;gap:1.5rem;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:1.5rem 1.75rem;margin-bottom:1.25rem}
+.ring-box{position:relative;width:160px;height:160px}
+.ring-svg{transform:rotate(-90deg)}
+.ring-bg{fill:none;stroke:var(--surface2);stroke-width:14}
+.ring-fill{fill:none;stroke-width:14;stroke-linecap:round;transition:stroke-dasharray 1.6s cubic-bezier(.4,0,.2,1)}
+.ring-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
+.ring-num{font-size:2.6rem;font-weight:900;line-height:1}
+.ring-max{font-size:.72rem;color:var(--text-muted);margin-top:2px}
+.score-meta h3{font-size:1.1rem;font-weight:800;color:var(--text);margin-bottom:.3rem}
+.score-meta p{font-size:.85rem;color:var(--text-muted);line-height:1.65;margin-bottom:.75rem}
+.score-range-bar{display:flex;gap:4px;margin-bottom:.5rem}
+.range-seg{flex:1;height:6px;border-radius:50px}
+.range-marker{position:relative}
+
+/* SECTION LABEL */
+.sec-lbl{font-size:.72rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.12em;font-weight:700;margin-bottom:.9rem;display:flex;align-items:center;gap:8px}
+.sec-lbl::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* CATEGORY CARDS */
+.cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.25rem}
+.cat-card{border-radius:16px;overflow:hidden;position:relative;border:1px solid var(--border);transition:border-color .2s,transform .2s}
+.cat-card:hover{border-color:var(--border2);transform:translateY(-2px)}
+.cat-bg{width:100%;height:110px;display:block}
+.cat-img-overlay{position:absolute;top:0;left:0;right:0;height:110px;background:linear-gradient(180deg,transparent 40%,var(--surface) 100%)}
+.cat-body{padding:0 1rem 1rem}
+.cat-name{font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.4rem;margin-top:-.3rem;word-break:break-word;line-height:1.3}
+.cat-scores-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem}
+.cat-score-val{font-size:1.1rem;font-weight:900;color:var(--accent)}
+.cat-score-pct{font-size:.8rem;font-weight:700;color:var(--text-muted)}
+.cat-bar-bg{background:var(--surface2);border-radius:50px;height:5px;overflow:hidden;margin-bottom:.35rem}
+.cat-bar{height:100%;border-radius:50px;transition:width 1.3s cubic-bezier(.4,0,.2,1)}
+.cat-level-tag{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:2px 8px;border-radius:4px;display:inline-block}
+
+/* RADAR */
+.radar-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:1.5rem;margin-bottom:1.25rem;text-align:center}
+
+/* PROGRAM */
+.program-section{margin-bottom:1.25rem}
+.month-block{background:var(--surface);border:1px solid var(--border);border-radius:20px;overflow:hidden;margin-bottom:1rem}
+.month-header{display:flex;align-items:center;gap:1rem;padding:1.2rem 1.5rem;position:relative}
+.month-header-img{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.12}
+.month-header-content{position:relative;z-index:1;display:flex;align-items:center;gap:1rem;width:100%}
+.month-badge{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:900;flex-shrink:0}
+.month-title{font-size:1rem;font-weight:800;color:var(--text)}
+.month-sub{font-size:.75rem;color:var(--text-muted);margin-top:1px}
+.month-header{cursor:pointer;user-select:none}
+.month-header:active{background:rgba(255,255,255,.04)}
+.sessions-grid.collapsed{max-height:0}
+.month-chevron{margin-left:auto;font-size:1rem;color:var(--text-muted);transition:transform .35s cubic-bezier(.4,0,.2,1);flex-shrink:0}
+.month-chevron.open{transform:rotate(90deg)}
+.month-chevron.closed{transform:rotate(0deg)}
+.sessions-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);max-height:2000px;overflow:hidden;transition:max-height .45s cubic-bezier(.4,0,.2,1)}
+.session-card{background:var(--surface);padding:1rem 1.2rem;transition:background .2s}
+.session-card:hover{background:var(--surface2)}
+.sess-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.4rem}
+.sess-num{font-size:.65rem;font-weight:800;color:var(--text-dim);text-transform:uppercase;letter-spacing:.1em}
+.sess-priority{font-size:.6rem;font-weight:700;padding:2px 7px;border-radius:4px;text-transform:uppercase;letter-spacing:.06em}
+.prio-alta{background:rgba(239,68,68,.15);color:#f87171}
+.prio-media{background:rgba(245,158,11,.12);color:#fbbf24}
+.prio-normal{background:rgba(100,116,139,.15);color:#94a3b8}
+.sess-title{font-size:.82rem;font-weight:700;color:var(--text);line-height:1.35;margin-bottom:.35rem}
+.sess-desc{font-size:.73rem;color:var(--text-muted);line-height:1.5;margin-bottom:.5rem}
+.sess-tools{display:flex;flex-wrap:wrap;gap:4px}
+.tool-chip{background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.15);color:var(--accent);font-size:.6rem;font-weight:700;padding:2px 7px;border-radius:4px;letter-spacing:.03em}
+
+/* RECOMMENDATIONS */
+.reco-section{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:1.5rem;margin-bottom:1.25rem}
+.reco-item{display:flex;align-items:flex-start;gap:12px;padding:.7rem 0;border-bottom:1px solid var(--border)}
+.reco-item:last-child{border-bottom:none}
+.reco-icon-box{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.reco-text h4{font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:2px}
+.reco-text p{font-size:.77rem;color:var(--text-muted);line-height:1.5}
+
+/* SAVE PANEL */
+.save-panel{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:1.5rem;margin-bottom:1.25rem}
+.save-status{font-size:.8rem;color:var(--accent);font-weight:600;margin-top:.75rem;min-height:1.2rem}
+
+/* ANSWERS PANEL */
+.answers-wrap{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.25rem;margin-bottom:1.25rem;display:none}
+.answers-wrap.open{display:block}
+.ans-row{display:flex;align-items:flex-start;gap:10px;padding:.6rem 0;border-bottom:1px solid var(--border);font-size:.8rem}
+.ans-row:last-child{border-bottom:none}
+.ans-qn{min-width:26px;height:26px;background:var(--surface2);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:800;color:var(--accent)}
+.ans-dot{width:8px;height:8px;border-radius:50%;min-width:8px;margin-top:4px}
+
+/* ACTION BAR */
+.action-bar{display:flex;gap:.75rem;flex-wrap:wrap;justify-content:center;padding:1rem 0}
+
+/* ADMIN PANEL */
+.admin-screen{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:1.5rem;margin-top:1rem}
+.admin-table{width:100%;border-collapse:collapse;font-size:.8rem;margin:1rem 0}
+.admin-table th{text-align:left;color:var(--text-muted);font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;padding:.5rem .75rem;border-bottom:1px solid var(--border)}
+.admin-table td{padding:.7rem .75rem;border-bottom:1px solid var(--border);color:var(--text-muted)}
+.admin-table tr:last-child td{border-bottom:none}
+.admin-table tr:hover td{background:var(--surface2)}
+.score-pill{display:inline-block;padding:3px 10px;border-radius:50px;font-weight:700;font-size:.75rem}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;display:flex;align-items:center;justify-content:center;padding:1rem;display:none}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:2rem;max-width:560px;width:100%;max-height:85vh;overflow-y:auto}
+.modal h3{font-size:1.2rem;font-weight:800;margin-bottom:.5rem;color:var(--text)}
+.modal p{font-size:.85rem;color:var(--text-muted);line-height:1.65;margin-bottom:1rem}
+.host-step{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:1rem 1.2rem;margin-bottom:.75rem}
+.host-step h4{font-size:.82rem;font-weight:800;color:var(--accent);margin-bottom:.4rem}
+.host-step ol{padding-left:1.2rem;font-size:.8rem;color:var(--text-muted);line-height:1.9}
+.host-step a{color:var(--accent);text-decoration:none}
+.host-step a:hover{text-decoration:underline}
+.code-snippet{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.6rem .9rem;font-family:monospace;font-size:.75rem;color:#a5b4fc;margin-top:.5rem;word-break:break-all}
+
+/* RESPONSIVE */
+@media(max-width:600px){
+  .cat-grid,.sessions-grid,.score-area{grid-template-columns:1fr}
+  .stats-row{grid-template-columns:repeat(2,1fr)}
+  .welcome-title{font-size:1.8rem}
+  .nav-row{flex-direction:column-reverse}
+  .nav-row .btn{width:100%}
+  .ring-box{width:130px;height:130px}
+  .res-title{font-size:1.5rem}
+  .action-bar .btn{flex:1 1 140px}
+}
+</style>
+</head>
+<body>
+<div class="glow-left"></div>
+<div class="wrap">
+
+<!-- BRAND HEADER -->
+<div class="header">
+  <div class="brand-chip">
+    <span class="brand-dot"></span>
+    Modo Emprendedor &#183; Ecosistema IA &#183; ICONE Academy
+  </div>
+</div>
+
+<!-- &#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552; WELCOME &#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552; -->
+<div class="screen active" id="s-welcome">
+  <div class="welcome-hero">
+    <div class="welcome-hero-img" style="background:linear-gradient(135deg,#060b18 0%,#0a1e3d 30%,#12083a 60%,#071826 100%);position:relative;overflow:hidden">
+    <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=1200&q=75" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.4;display:block" onerror="this.remove()" loading="lazy">
+    <div style="position:absolute;inset:0;background-image:radial-gradient(rgba(0,212,255,.08) 1px,transparent 1px);background-size:28px 28px"></div>
+    <div style="position:absolute;top:-60px;right:-60px;width:400px;height:400px;background:radial-gradient(circle,rgba(0,212,255,.12) 0%,transparent 65%)"></div>
+    <div style="position:absolute;bottom:-40px;left:-40px;width:300px;height:300px;background:radial-gradient(circle,rgba(124,58,237,.15) 0%,transparent 65%)"></div>
+  </div>
+    <div class="welcome-hero-overlay"></div>
+    <div class="welcome-hero-content">
+      <h1 class="welcome-title">Diagn&#243;stico de<br>Madurez Emprendedora</h1>
+      <p class="welcome-sub">Descubre en qu&#233; nivel est&#225; tu negocio digital hoy</p>
+    </div>
+  </div>
+  <div class="welcome-body">
+    <p class="welcome-desc">
+      Este diagn&#243;stico de 20 preguntas te permite identificar con precisi&#243;n d&#243;nde est&#225;s
+      en tu camino emprendedor digital: tus fortalezas, tus puntos de mayor oportunidad
+      y el programa personalizado que seguiremos juntos en los pr&#243;ximos 3 meses.
+    </p>
+    <div class="stats-row">
+      <div class="stat-box"><div class="stat-num">20</div><div class="stat-lbl">Preguntas</div></div>
+      <div class="stat-box"><div class="stat-num">~8</div><div class="stat-lbl">Minutos</div></div>
+      <div class="stat-box"><div class="stat-num">5</div><div class="stat-lbl">Dimensiones</div></div>
+      <div class="stat-box"><div class="stat-num">100</div><div class="stat-lbl">Puntaje m&#225;x</div></div>
+    </div>
+    <div class="name-field" style="margin-bottom:1.75rem">
+      <label>&#191;C&#243;mo te llamas, emprendedor/a?</label>
+      <input type="text" id="inp-name" placeholder="Escribe tu nombre aqu&#237;..." autocomplete="off">
+    </div>
+    <div style="display:flex;gap:1rem;flex-wrap:wrap;align-items:center">
+      <button class="btn btn-primary btn-lg" onclick="startDiag()">Comenzar diagn&#243;stico &#8594;</button>
+      <button class="btn btn-ghost" id="btn-admin-hidden" style="display:none" onclick="openAdmin()">&#128202; Historial</button>
+    </div>
+  </div>
+</div>
+
+<!-- &#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552; QUESTIONS &#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552; -->
+<div class="screen" id="s-questions">
+  <div class="q-header">
+    <div class="q-meta">
+      <span class="q-label">Progreso del diagn&#243;stico</span>
+      <span class="q-counter" id="q-counter">1 / 20</span>
+    </div>
+    <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:5%"></div></div>
+    <span class="cat-pill" id="cat-pill">Ecosistema Digital</span>
+  </div>
+  <div id="q-area"></div>
+  <div class="nav-row">
+    <button class="btn btn-secondary" id="btn-prev" onclick="prevQ()" disabled>&#8592; Anterior</button>
+    <button class="btn btn-primary" id="btn-next" onclick="nextQ()" disabled>Siguiente &#8594;</button>
+  </div>
+</div>
+
+<!-- &#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552; RESULTS &#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552; -->
+<div class="screen" id="s-results">
+
+  <!-- Hero -->
+  <div class="res-hero">
+    <div class="res-hero-img" id="res-hero-img" style="background:linear-gradient(135deg,#060b18,#0a1e3d);transition:background 0.5s;position:relative;overflow:hidden">
+    <img id="res-hero-photo" src="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.35;display:none" onerror="this.style.display='none'" loading="lazy">
+  </div>
+    <div class="res-hero-grad"></div>
+    <div class="res-hero-content">
+      <div class="res-name" id="res-name"></div>
+      <div id="res-level-pill"></div>
+      <div class="res-title" id="res-title"></div>
+      <div class="res-score-big" id="res-score-big" style="color:var(--accent)"></div>
+      <div class="res-score-label">puntos de 100</div>
+    </div>
+  </div>
+
+  <!-- Score ring + description -->
+  <div class="score-area">
+    <div class="ring-box">
+      <svg class="ring-svg" width="160" height="160" viewBox="0 0 160 160">
+        <circle class="ring-bg" cx="80" cy="80" r="66"/>
+        <circle class="ring-fill" id="ring-fill" cx="80" cy="80" r="66"
+          stroke-dasharray="0 415" stroke-dashoffset="0"/>
+      </svg>
+      <div class="ring-center">
+        <div class="ring-num" id="ring-num"></div>
+        <div class="ring-max">/ 100</div>
+      </div>
+    </div>
+    <div class="score-meta">
+      <h3 id="score-meta-title"></h3>
+      <p id="score-meta-desc"></p>
+      <div class="score-range-bar">
+        <div class="range-seg" style="background:#ef4444;opacity:.4"></div>
+        <div class="range-seg" style="background:#f59e0b;opacity:.4"></div>
+        <div class="range-seg" style="background:#10b981;opacity:.4"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:.62rem;color:var(--text-dim);margin-top:3px">
+        <span>0 &#8212; Inicial</span><span>40 &#8212; Intermedio</span><span>70 &#8212; Experto &#8212; 100</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- DIMENSIONS -->
+  <div class="sec-lbl">&#128202; Resultados por dimensi&#243;n</div>
+  <div class="cat-grid" id="cat-grid"></div>
+
+  <!-- RADAR -->
+  <div class="radar-card">
+    <div class="sec-lbl" style="justify-content:center;margin-bottom:.5rem">&#128376;&#65039; Mapa de madurez emprendedora</div>
+    <canvas id="radar" width="340" height="290"></canvas>
+  </div>
+
+  <!-- PROGRAM -->
+  <div class="sec-lbl">&#128467;&#65039; Tu programa personalizado &#8212; 3 meses &#183; 12 sesiones</div>
+  <div class="program-section" id="program-section"></div>
+
+  <!-- RECOMMENDATIONS -->
+  <div class="sec-lbl">&#128161; Acciones prioritarias para tu nivel</div>
+  <div class="reco-section" id="reco-section"></div>
+
+  <!-- SAVE DATA -->
+  <div class="save-panel">
+    <div class="sec-lbl" style="margin-bottom:.75rem">&#128190; Guardar diagn&#243;stico</div>
+    <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:1rem">Guarda este resultado para consultarlo despu&#233;s y llevar el seguimiento de todos tus emprendedores.</p>
+    <div style="display:flex;gap:.75rem;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="saveDiag()">&#128190; Guardar en historial</button>
+      <button class="btn btn-secondary" onclick="exportCSV()">&#128229; Exportar CSV</button>
+      <button class="btn btn-secondary" onclick="window.print()">&#128424;&#65039; Imprimir / PDF</button>
+    </div>
+    <div class="save-status" id="save-status"></div>
+  </div>
+
+  <!-- ANSWERS TOGGLE -->
+  <div style="text-align:center;margin-bottom:1rem">
+    <button class="btn btn-ghost" onclick="toggleAnswers()">&#128203; Ver resumen de respuestas</button>
+  </div>
+  <div class="answers-wrap" id="answers-wrap"></div>
+
+  <!-- ACTION BAR -->
+  <div class="action-bar">
+    <button class="btn btn-purple" onclick="openModal('modal-hosting')">&#127760; Publicar en l&#237;nea</button>
+    <button class="btn btn-secondary" onclick="restart()">&#128260; Nuevo diagn&#243;stico</button>
+  </div>
+
+</div><!-- /s-results -->
+
+<!-- &#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552; ADMIN PANEL &#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552; -->
+<div class="screen" id="s-admin">
+  <div class="admin-screen">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap;gap:.75rem">
+      <div>
+        <h2 style="font-size:1.15rem;font-weight:800;color:var(--text);margin-bottom:.2rem">&#128202; Historial de Diagn&#243;sticos</h2>
+        <p style="font-size:.78rem;color:var(--text-muted)" id="admin-count">Cargando...</p>
+      </div>
+      <div style="display:flex;gap:.75rem">
+        <button class="btn btn-green" onclick="exportAllCSV()">&#128229; Exportar todo CSV</button>
+        <button class="btn btn-secondary" onclick="goBack()">&#8592; Volver</button>
+      </div>
+    </div>
+    <div id="admin-content"></div>
+  </div>
+</div>
+
+<!-- &#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552; MODAL HOSTING &#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552; -->
+<div class="modal-overlay" id="modal-hosting">
+  <div class="modal">
+    <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:1rem">
+      <h3>&#127760; Publicar el diagn&#243;stico en l&#237;nea</h3>
+      <button class="btn btn-ghost" style="padding:.4rem .75rem;font-size:.8rem" onclick="closeModal('modal-hosting')">&#10005; Cerrar</button>
+    </div>
+    <p>Para tener un enlace propio que puedas compartir con cada emprendedor, tienes dos opciones gratuitas y muy f&#225;ciles:</p>
+    <div class="host-step">
+      <h4>&#9889; Opci&#243;n 1: Netlify Drop (la m&#225;s r&#225;pida &#8212; 2 minutos)</h4>
+      <ol>
+        <li>Ve a <a href="https://app.netlify.com/drop" target="_blank">app.netlify.com/drop</a></li>
+        <li>Arrastra el archivo <strong>diagnostico-modo-emprendedor-v2.html</strong> a la zona gris</li>
+        <li>&#161;Listo! En segundos tienes una URL como: <span style="color:var(--accent)">amazing-fox-12345.netlify.app</span></li>
+        <li>Para una URL m&#225;s bonita, crea cuenta gratis y ren&#243;mbrala a algo como <strong>diagnostico-modo-emprendedor.netlify.app</strong></li>
+      </ol>
+    </div>
+    <div class="host-step">
+      <h4>&#128025; Opci&#243;n 2: GitHub Pages (URL permanente)</h4>
+      <ol>
+        <li>Crea cuenta en <a href="https://github.com" target="_blank">github.com</a> (gratis)</li>
+        <li>Crea un repositorio nuevo (nombre ej: <strong>diagnostico-ia</strong>)</li>
+        <li>Sube el archivo HTML como <strong>index.html</strong></li>
+        <li>Ve a Settings &#8594; Pages &#8594; Source: "main" &#8594; Save</li>
+        <li>URL resultante: <span style="color:var(--accent)">tu-usuario.github.io/diagnostico-ia</span></li>
+      </ol>
+    </div>
+    <div class="host-step">
+      <h4>&#128302; Pr&#243;xima versi&#243;n: con base de datos real</h4>
+      <p style="font-size:.78rem;color:var(--text-muted);margin-top:.3rem;line-height:1.6">Para guardar diagn&#243;sticos en la nube (Supabase) y acceder desde cualquier dispositivo, necesitamos agregar el back-end. Lo configuramos una vez que hagas las primeras sesiones con los emprendedores y valides el cuestionario.</p>
+    </div>
+    <button class="btn btn-primary mt1" onclick="closeModal('modal-hosting')">Entendido &#10003;</button>
+  </div>
+</div>
+
+<!-- &#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552; JAVASCRIPT &#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552; &#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552; -->
+<script>
+// \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+// DATA
+// \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+const QS = [
+  // DIMENSI\u00D3N 1: ECOSISTEMA DIGITAL
+  { id:1, cat:"Ecosistema Digital", color:"#00d4ff",
+    q:"\u00BFQu\u00E9 herramientas digitales usas actualmente para gestionar tu negocio?",
+    opts:["No uso herramientas digitales. Todo lo hago de forma verbal o en papel.",
+          "Uso lo b\u00E1sico: WhatsApp, Excel o cuadernos digitales.",
+          "Tengo apps especializadas: Google Workspace, alg\u00FAn CRM o gestor de proyectos.",
+          "Tengo un ecosistema digital integrado con varias herramientas conectadas."]},
+  { id:2, cat:"Ecosistema Digital", color:"#00d4ff",
+    q:"\u00BFC\u00F3mo describes tu presencia activa en internet y redes sociales?",
+    opts:["No tengo presencia digital establecida.",
+          "Tengo perfiles en redes pero los actualizo de forma espor\u00E1dica.",
+          "Mantengo presencia activa en 2\u20133 canales con publicaciones regulares.",
+          "Tengo estrategia omnicanal: web, redes, contenido y comunidad alineados."]},
+  { id:3, cat:"Ecosistema Digital", color:"#00d4ff",
+    q:"\u00BFTienes procesos automatizados en tu negocio?",
+    opts:["Todo es manual. No he automatizado nada.",
+          "Automatizo alg\u00FAn env\u00EDo de correo o respuesta b\u00E1sica.",
+          "Tengo varios flujos automatizados: respuestas, recordatorios, facturaci\u00F3n.",
+          "Mis procesos principales funcionan solos con m\u00EDnima intervenci\u00F3n m\u00EDa."]},
+  { id:4, cat:"Ecosistema Digital", color:"#00d4ff",
+    q:"\u00BFC\u00F3mo mides el desempe\u00F1o de tu negocio?",
+    opts:["No mido nada de forma formal.",
+          "Reviso ventas e ingresos b\u00E1sicos de vez en cuando.",
+          "Tengo KPIs definidos y los reviso con regularidad.",
+          "Tengo dashboard con m\u00E9tricas en tiempo real y tomo decisiones con datos."]},
+  // DIMENSI\u00D3N 2: INTELIGENCIA ARTIFICIAL
+  { id:5, cat:"Inteligencia Artificial", color:"#7c3aed",
+    q:"\u00BFC\u00F3mo usas la Inteligencia Artificial en tu negocio?",
+    opts:["No uso IA. No s\u00E9 por d\u00F3nde empezar.",
+          "He explorado alguna herramienta de IA una o dos veces.",
+          "Uso IA regularmente para tareas concretas: contenido, investigaci\u00F3n, textos.",
+          "La IA est\u00E1 integrada en mis procesos clave y me genera ventaja competitiva."]},
+  { id:6, cat:"Inteligencia Artificial", color:"#7c3aed",
+    q:"\u00BFCu\u00E1l es tu postura frente a la IA y el futuro digital?",
+    opts:["La IA me genera incertidumbre o no la entiendo todav\u00EDa.",
+          "S\u00E9 que debo aprender pero no he dado el paso concreto.",
+          "Estoy aprendiendo y experimentando activamente con herramientas de IA.",
+          "La IA es parte de mi ventaja competitiva hoy. La uso a diario con intenci\u00F3n."]},
+  { id:7, cat:"Inteligencia Artificial", color:"#7c3aed",
+    q:"\u00BFProduces contenido usando herramientas de IA?",
+    opts:["No produzco contenido digital para mi negocio.",
+          "Creo contenido ocasionalmente, sin estrategia ni apoyo de IA.",
+          "Uso IA para crear o editar contenido: textos, im\u00E1genes, guiones.",
+          "Tengo flujo de contenido asistido por IA con calendario, formatos y m\u00E9tricas."]},
+  { id:8, cat:"Inteligencia Artificial", color:"#7c3aed",
+    q:"\u00BFUtilizas IA para aprender, investigar o tomar decisiones?",
+    opts:["No uso IA para aprendizaje ni investigaci\u00F3n.",
+          "La he usado una vez para buscar informaci\u00F3n.",
+          "Uso IA regularmente como asistente de investigaci\u00F3n y s\u00EDntesis.",
+          "Tengo rutina con IA para an\u00E1lisis profundo y toma de decisiones estrat\u00E9gicas."]},
+  // DIMENSI\u00D3N 3: MARCA Y PROPUESTA DE VALOR
+  { id:9, cat:"Marca y Propuesta de Valor", color:"#f59e0b",
+    q:"\u00BFQu\u00E9 tan definida est\u00E1 la esencia de tu marca personal o empresarial?",
+    opts:["No he pensado en construir mi marca todav\u00EDa.",
+          "Tengo logo e idea general pero sin identidad visual ni mensaje consistente.",
+          "Tengo identidad visual, tono de comunicaci\u00F3n y prop\u00F3sito definidos.",
+          "Mi marca tiene posicionamiento claro, historia poderosa y comunidad fiel."]},
+  { id:10, cat:"Marca y Propuesta de Valor", color:"#f59e0b",
+    q:"\u00BFQu\u00E9 tan clara y diferenciada es tu propuesta de valor?",
+    opts:["No la tengo definida. Ofrezco lo que me piden.",
+          "La tengo en mente pero no est\u00E1 escrita ni comunicada claramente.",
+          "Est\u00E1 documentada y la comunico con consistencia a mis clientes.",
+          "Est\u00E1 validada con clientes reales y diferencia mi oferta de la competencia."]},
+  { id:11, cat:"Marca y Propuesta de Valor", color:"#f59e0b",
+    q:"\u00BFC\u00F3mo est\u00E1 estructurada tu oferta de productos o servicios?",
+    opts:["No tengo oferta estructurada. Hago lo que me pidan.",
+          "Tengo servicios definidos pero sin paquetes ni precios claros.",
+          "Tengo portafolio estructurado con precios, condiciones y descripci\u00F3n clara.",
+          "Tengo escalera de valor con m\u00FAltiples niveles de acceso y conversi\u00F3n."]},
+  { id:12, cat:"Marca y Propuesta de Valor", color:"#f59e0b",
+    q:"\u00BFTienes claro el prop\u00F3sito de tu negocio m\u00E1s all\u00E1 del dinero?",
+    opts:["Solo pienso en generar ingresos. El prop\u00F3sito no lo tengo definido.",
+          "Hay algo m\u00E1s que el dinero, pero no lo tengo articulado.",
+          "Tengo misi\u00F3n y prop\u00F3sito definidos y los comunico con consistencia.",
+          "Mi prop\u00F3sito gu\u00EDa cada decisi\u00F3n, motiva a mi equipo y conecta con mi comunidad."]},
+  // DIMENSI\u00D3N 4: ESTRATEGIA COMERCIAL
+  { id:13, cat:"Estrategia Comercial", color:"#10b981",
+    q:"\u00BFC\u00F3mo consigues nuevos clientes actualmente?",
+    opts:["Solo por referidos o por casualidad. No tengo estrategia.",
+          "Hago publicidad b\u00E1sica o acciones sueltas sin estrategia.",
+          "Tengo embudo de ventas definido y acciones comerciales programadas.",
+          "Tengo sistema de adquisici\u00F3n, retenci\u00F3n y referidos semi-automatizado."]},
+  { id:14, cat:"Estrategia Comercial", color:"#10b981",
+    q:"\u00BFC\u00F3mo es el proceso de atenci\u00F3n y experiencia de tus clientes?",
+    opts:["Atiendo de forma reactiva. No tengo proceso definido.",
+          "Tengo proceso b\u00E1sico pero no lo aplico siempre con consistencia.",
+          "Tengo protocolo de bienvenida, acompa\u00F1amiento y cierre para cada cliente.",
+          "Tengo journey del cliente mapeado y momentos especiales automatizados."]},
+  { id:15, cat:"Estrategia Comercial", color:"#10b981",
+    q:"\u00BFC\u00F3mo administras las finanzas de tu negocio?",
+    opts:["Mezclo mis finanzas personales con las del negocio.",
+          "Tengo cuentas separadas pero control b\u00E1sico e informal.",
+          "Llevo contabilidad, flujo de caja y tengo proyecciones financieras.",
+          "Tengo dashboard financiero, proyecciones y reinversi\u00F3n planificada."]},
+  { id:16, cat:"Estrategia Comercial", color:"#10b981",
+    q:"\u00BFTienes alianzas o colaboraciones estrat\u00E9gicas activas?",
+    opts:["Trabajo completamente solo/a. No tengo alianzas.",
+          "He explorado posibilidades pero sin acuerdos concretos.",
+          "Tengo 1\u20133 alianzas activas que me generan valor o alcance.",
+          "Tengo ecosistema de alianzas que amplifica mi negocio y mi marca."]},
+  // DIMENSI\u00D3N 5: MENTALIDAD Y CRECIMIENTO
+  { id:17, cat:"Mentalidad y Crecimiento", color:"#ec4899",
+    q:"\u00BFC\u00F3mo describes tu relaci\u00F3n con los retos y la incertidumbre?",
+    opts:["Los retos me bloquean. Tiendo a aplazar decisiones dif\u00EDciles.",
+          "Los enfrento pero me cuestan mucho esfuerzo emocional.",
+          "Los veo como oportunidades de aprendizaje y crecimiento.",
+          "Los anticipo, experimento r\u00E1pido, aprendo y pivoto con agilidad."]},
+  { id:18, cat:"Mentalidad y Crecimiento", color:"#ec4899",
+    q:"\u00BFTienes visi\u00F3n clara y plan concreto para tu negocio?",
+    opts:["No tengo visi\u00F3n ni plan escrito. Voy al d\u00EDa.",
+          "Tengo idea de ad\u00F3nde quiero llegar pero sin plan estructurado.",
+          "Tengo objetivos anuales y planificaci\u00F3n trimestral activa.",
+          "Tengo visi\u00F3n a 3 a\u00F1os, OKRs trimestrales y revisiones peri\u00F3dicas."]},
+  { id:19, cat:"Mentalidad y Crecimiento", color:"#ec4899",
+    q:"\u00BFC\u00F3mo te actualizas en tu industria y en nuevas tecnolog\u00EDas?",
+    opts:["No tengo h\u00E1bito de aprendizaje activo o continuo.",
+          "Leo noticias o veo videos de forma ocasional.",
+          "Tengo rutina de aprendizaje y tomo cursos o programas regularmente.",
+          "Aprendo, experimento y aplico nuevas tendencias de forma sistem\u00E1tica."]},
+  { id:20, cat:"Mentalidad y Crecimiento", color:"#ec4899",
+    q:"\u00BFC\u00F3mo organizas tu tiempo, energ\u00EDa y prioridades como emprendedor/a?",
+    opts:["Trabajo sin orden claro, apagando incendios todo el tiempo.",
+          "Tengo lista de tareas pero sin m\u00E9todo o sistema real.",
+          "Uso metodolog\u00EDa de gesti\u00F3n personal: bloques de tiempo, prioridades, revisiones.",
+          "Tengo sistema personal optimizado con delegaci\u00F3n estrat\u00E9gica y foco total."]}
+];
+
+const CATS = [
+  { name:"Ecosistema Digital",        qs:[0,1,2,3],    color:"#00d4ff", icon:"\u{1F310}", img:"https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=500&q=70" },
+  { name:"Inteligencia Artificial",   qs:[4,5,6,7],    color:"#7c3aed", icon:"\u{1F916}", img:"https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=500&q=70" },
+  { name:"Marca y Prop. de Valor",    qs:[8,9,10,11],  color:"#f59e0b", icon:"\u{1F3AF}", img:"https://images.unsplash.com/photo-1561070791-2526f30c0c7b?auto=format&fit=crop&w=500&q=70" },
+  { name:"Estrategia Comercial",      qs:[12,13,14,15],color:"#10b981", icon:"\u{1F4C8}", img:"https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=500&q=70" },
+  { name:"Mentalidad y Crecimiento",  qs:[16,17,18,19],color:"#ec4899", icon:"\u{1F680}", img:"https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=500&q=70" }
+];
+
+// Level definitions
+const LEVELS = {
+  inicial: {
+    id:"inicial", label:"\u{1F331} Nivel Inicial", pillClass:"l-inicial",
+    title:"Modo Arranque", range:"0 \u2013 39 pts",
+    heroImg:"linear-gradient(135deg,#0a0018 0%,#1a0630 40%,#0d1a0a 100%)",heroPhoto:"https://images.unsplash.com/photo-1434494878577-86c23bcb06b9?auto=format&fit=crop&w=1200&q=75",
+    desc:"Est\u00E1s en el punto de partida de tu transformaci\u00F3n digital. Tienes mucho territorio por explorar y eso es una ventaja enorme: cada paso que des desde aqu\u00ED ser\u00E1 un salto real. El programa Modo Emprendedor \u00B7 Ecosistema IA est\u00E1 construido para ti.",
+    recos:[
+      {icon:"\u{1F6E0}\uFE0F",bg:"rgba(0,212,255,.1)",t:"Activa tu ecosistema digital base",d:"Configura Google Workspace, abre una cuenta de Claude y elige una sola red social donde estar\u00E1 tu cliente ideal."},
+      {icon:"\u{1F916}",bg:"rgba(124,58,237,.1)",t:"Primera semana con IA",d:"Usa Claude esta semana para describir tu negocio, afinar tu propuesta de valor y crear tu primer post para redes sociales."},
+      {icon:"\u{1F3AF}",bg:"rgba(245,158,11,.1)",t:"Define tu propuesta de valor hoy",d:"Escribe: 'Yo ayudo a [qui\u00E9n] a [qu\u00E9 resultado] a trav\u00E9s de [c\u00F3mo].' Esto es lo primero que trabajaremos juntos."},
+      {icon:"\u{1F4B0}",bg:"rgba(16,185,129,.1)",t:"Separa tus finanzas",d:"Abre una cuenta bancaria exclusiva para tu negocio esta semana. Es el primer paso financiero que no puedes aplazar."},
+      {icon:"\u{1F4C5}",bg:"rgba(236,72,153,.1)",t:"3 bloques semanales inamovibles",d:"Agenda hoy 3 bloques de 45 minutos a la semana exclusivos para trabajar estrat\u00E9gicamente EN tu negocio."}
+    ]
+  },
+  intermedio: {
+    id:"intermedio", label:"\u{1F680} Nivel Intermedio", pillClass:"l-intermedio",
+    title:"Modo Aceleraci\u00F3n", range:"40 \u2013 69 pts",
+    heroImg:"linear-gradient(135deg,#001633 0%,#0a1e3d 40%,#0d0a2e 100%)",heroPhoto:"https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=75",
+    desc:"Ya tienes bases s\u00F3lidas. Usas herramientas digitales, has pensado en tu marca y tienes procesos en marcha. El siguiente nivel es integrar la IA de forma estrat\u00E9gica y construir sistemas que trabajen por ti mientras t\u00FA te enfocas en crecer.",
+    recos:[
+      {icon:"\u{1F916}",bg:"rgba(124,58,237,.1)",t:"IA integrada en 3 procesos clave",d:"Esta semana elige 3 tareas repetitivas de tu negocio y crea un prompt de Claude para cada una. Empieza a delegar a la IA."},
+      {icon:"\u{1F3F7}\uFE0F",bg:"rgba(245,158,11,.1)",t:"Eleva tu esencia de marca",d:"Define tu historia de origen, tu posicionamiento \u00FAnico y el mensaje central de tu marca. Lo haremos con IA y con profundidad."},
+      {icon:"\u{1F4CA}",bg:"rgba(0,212,255,.1)",t:"Tu primer dashboard de m\u00E9tricas",d:"Elige 5 KPIs (ej: clientes nuevos/mes, ingresos, tasa de cierre, alcance, conversi\u00F3n) y crea una hoja de seguimiento semanal."},
+      {icon:"\u{1F517}",bg:"rgba(16,185,129,.1)",t:"2 alianzas estrat\u00E9gicas este mes",d:"Identifica 2 perfiles complementarios al tuyo y prop\u00F3n una colaboraci\u00F3n concreta de beneficio mutuo."},
+      {icon:"\u2699\uFE0F",bg:"rgba(236,72,153,.1)",t:"Automatiza lo repetitivo",d:"Configura respuestas autom\u00E1ticas para WhatsApp Business, seguimiento a prospectos y al menos un proceso administrativo."}
+    ]
+  },
+  experto: {
+    id:"experto", label:"\u26A1 Nivel Experto", pillClass:"l-experto",
+    title:"Modo Ecosistema", range:"70 \u2013 100 pts",
+    heroImg:"linear-gradient(135deg,#001a12 0%,#0a1e14 40%,#0a1420 100%)",heroPhoto:"https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=1200&q=75",
+    desc:"Tienes un negocio digital maduro y una mentalidad emprendedora s\u00F3lida. Est\u00E1s listo para escalar, liderar comunidad y convertirte en referente de tu industria. El programa Modo Emprendedor \u00B7 Ecosistema IA te ayudar\u00E1 a afinar, sistematizar y multiplicar tu impacto.",
+    recos:[
+      {icon:"\u{1F3C6}",bg:"rgba(16,185,129,.1)",t:"Escala tu modelo de negocio",d:"Define qu\u00E9 parte de tu oferta puedes productizar, vender de forma grupal o masiva, sin intercambiar m\u00E1s tiempo por dinero."},
+      {icon:"\u{1F310}",bg:"rgba(0,212,255,.1)",t:"Construye o consolida tu comunidad",d:"Lanza un newsletter, grupo privado o programa de membres\u00EDa. Tu comunidad es el activo m\u00E1s valioso que puedes construir."},
+      {icon:"\u{1F91D}",bg:"rgba(245,158,11,.1)",t:"Posici\u00F3nate como referente",d:"Crea contenido de alto valor, da charlas, ofrece mentor\u00EDa o escribe art\u00EDculos de fondo en tu industria."},
+      {icon:"\u{1F4C8}",bg:"rgba(124,58,237,.1)",t:"Diversifica tus ingresos",d:"Agrega un producto digital, un servicio grupal o un retainer de acompa\u00F1amiento a tu portafolio este trimestre."},
+      {icon:"\u{1F9E0}",bg:"rgba(236,72,153,.1)",t:"Multiplica con IA y equipo",d:"Entrena a tus colaboradores en el uso de IA. Lo que t\u00FA haces en 1 hora, tu equipo puede hacer en 10 minutos con las herramientas correctas."}
+    ]
+  }
+};
+
+// 12-session program \u2014 personalized by priorities (weak cats first)
+function buildProgram(catScores, levelId) {
+  // Sort categories by score ascending (weakest first)
+  const sorted = [...catScores].sort((a,b) => a.pct - b.pct);
+  const w1 = sorted[0].name, w2 = sorted[1].name;
+
+  const prioFor = (catName) => {
+    if (catName === w1) return {label:'Prioridad Alta', cls:'prio-alta'};
+    if (catName === w2) return {label:'Prioridad Media', cls:'prio-media'};
+    return {label:'Incluida', cls:'prio-normal'};
+  };
+
+  const MONTHS = [
+    {
+      title:"Mes 1 \u00B7 Esencia y Ecosistema",
+      photo:"https://images.unsplash.com/photo-1434494878577-86c23bcb06b9?auto=format&fit=crop&w=900&q=70",
+      emoji:"\u{1F9ED}", color:"#00d4ff",
+      sub:"Identidad, herramientas base y primeros pasos con IA",
+      sessions:[
+        {
+          n:1, title:"Diagn\u00F3stico profundo + Mapa de ecosistema digital",
+          desc:"An\u00E1lisis completo de resultados. Definici\u00F3n del punto de partida y hoja de ruta personalizada.",
+          tools:["Claude","Google Workspace","Miro"],
+          catRef:"Ecosistema Digital"
+        },
+        {
+          n:2, title:"Esencia de marca con IA",
+          desc:"Arquetipos, historia de origen, propuesta de valor, tono y mensaje central. Todo construido con IA.",
+          tools:["Claude","Canva","GLM 4.7"],
+          catRef:"Marca y Propuesta de Valor"
+        },
+        {
+          n:3, title:"Primera inmersi\u00F3n en IA aplicada",
+          desc:"Instalaci\u00F3n del ecosistema IA: Claude, Perplexity, Notebook LM. Primeros prompts reales del negocio.",
+          tools:["Claude","Perplexity","Notebook LM"],
+          catRef:"Inteligencia Artificial"
+        },
+        {
+          n:4, title:"Revisi\u00F3n Mes 1 \u00B7 Hitos y ajuste del plan",
+          desc:"Evaluaci\u00F3n de avances, ajuste de prioridades y definici\u00F3n de enfoque para el Mes 2.",
+          tools:["Claude","Google Docs","Antigravity"],
+          catRef:null
+        }
+      ]
+    },
+    {
+      title:"Mes 2 \u00B7 Producci\u00F3n y Estrategia",
+      photo:"https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=900&q=70",
+      emoji:"\u2699\uFE0F", color:"#7c3aed",
+      sub:"Contenido con IA, embudo comercial y m\u00E9tricas de negocio",
+      sessions:[
+        {
+          n:5, title:"Ecosistema de herramientas configurado",
+          desc:"Configuraci\u00F3n completa: Google Workspace, WhatsApp Business, herramientas de IA integradas al flujo de trabajo.",
+          tools:["Google Workspace","WhatsApp Business","Zapier"],
+          catRef:"Ecosistema Digital"
+        },
+        {
+          n:6, title:"Estrategia de contenidos con IA",
+          desc:"Calendario editorial, creaci\u00F3n de contenido asistida por IA, formatos, canales y frecuencia estrat\u00E9gica.",
+          tools:["Claude","Canva","GLM 4.7","CapCut"],
+          catRef:"Inteligencia Artificial"
+        },
+        {
+          n:7, title:"Embudo comercial digital",
+          desc:"Dise\u00F1o del embudo de captaci\u00F3n, conversi\u00F3n y retenci\u00F3n. Primeras automatizaciones comerciales.",
+          tools:["Claude","WhatsApp","Google Forms","Calendly"],
+          catRef:"Estrategia Comercial"
+        },
+        {
+          n:8, title:"Revisi\u00F3n Mes 2 \u00B7 M\u00E9tricas y decisiones",
+          desc:"Dashboard de m\u00E9tricas del negocio. An\u00E1lisis de resultados y decisiones estrat\u00E9gicas basadas en datos.",
+          tools:["Google Sheets","Claude","Looker Studio"],
+          catRef:null
+        }
+      ]
+    },
+    {
+      title:"Mes 3 \u00B7 Marca, Escala y Comunidad",
+      photo:"https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=900&q=70",
+      emoji:"\u{1F680}", color:"#10b981",
+      sub:"Posicionamiento, alianzas y plan de continuidad post-programa",
+      sessions:[
+        {
+          n:9, title:"Posicionamiento y visibilidad",
+          desc:"Estrategia de posicionamiento como referente. LinkedIn/Instagram de autoridad. SEO personal con IA.",
+          tools:["Claude","Perplexity","Canva","LinkedIn"],
+          catRef:"Marca y Propuesta de Valor"
+        },
+        {
+          n:10, title:"Automatizaci\u00F3n avanzada y productividad con IA",
+          desc:"Flujos de trabajo automatizados. Delegaci\u00F3n estrat\u00E9gica. Sistema personal de productividad optimizado.",
+          tools:["Claude","Zapier","Notion","Antigravity"],
+          catRef:"Ecosistema Digital"
+        },
+        {
+          n:11, title:"Comunidad, alianzas y ecosistema de crecimiento",
+          desc:"Construcci\u00F3n o fortalecimiento de comunidad propia. Alianzas estrat\u00E9gicas activadas. Red de valor.",
+          tools:["Claude","WhatsApp","Newsletter","Zoom"],
+          catRef:"Estrategia Comercial"
+        },
+        {
+          n:12, title:"Diagn\u00F3stico final \u00B7 Cierre y plan de continuidad",
+          desc:"Diagn\u00F3stico de cierre para medir avances. Hitos logrados. Hoja de ruta para los pr\u00F3ximos 3 meses.",
+          tools:["Claude","Google Docs","Canva"],
+          catRef:null
+        }
+      ]
+    }
+  ];
+
+  let html = '';
+  MONTHS.forEach((m, mi) => {
+    const isOpen = mi === 0;
+    const gridCls = isOpen ? 'sessions-grid' : 'sessions-grid collapsed';
+    const chevCls = isOpen ? 'month-chevron open' : 'month-chevron closed';
+    html += `<div class="month-block">
+      <div class="month-header" onclick="toggleMonth(this)" style="background:linear-gradient(135deg,rgba(6,11,24,.97),rgba(6,11,24,.85));position:relative;overflow:hidden">
+        ${m.photo ? `<img src="${m.photo}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.2;display:block" onerror="this.remove()" loading="lazy">` : ''}
+        <div class="month-header-img"></div>
+        <div class="month-header-content">
+          <div class="month-badge" style="background:${m.color}22;color:${m.color};border:1px solid ${m.color}44;font-size:1.5rem">${m.emoji}</div>
+          <div style="flex:1">
+            <div class="month-title">${m.title}</div>
+            <div class="month-sub">${m.sub}</div>
+          </div>
+          <span class="${chevCls}">&#9658;</span>
+        </div>
+      </div>
+      <div class="${gridCls}">`;
+    m.sessions.forEach(s => {
+      const prio = s.catRef ? prioFor(s.catRef) : {label:'Cierre de Mes',cls:'prio-normal'};
+      html += `<div class="session-card">
+        <div class="sess-top">
+          <span class="sess-num">Sesi\u00F3n ${s.n}</span>
+          <span class="sess-priority ${prio.cls}">${prio.label}</span>
+        </div>
+        <div class="sess-title">${s.title}</div>
+        <div class="sess-desc">${s.desc}</div>
+        <div class="sess-tools">${s.tools.map(t=>`<span class="tool-chip">${t}</span>`).join('')}</div>
+      </div>`;
+    });
+    html += `</div></div>`;
+  });
+  return html;
+}
+
+// \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+// STATE + SCORING
+// \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+let curQ = 0, answers = new Array(20).fill(null), entName = '';
+
+function rawScore() { return answers.reduce((s,a)=>s+(a+1),0); } // 20\u201380
+function normScore(raw) { return Math.round(((raw-20)/60)*100); }  // 0\u2013100
+function catRaw(catIdx) { return CATS[catIdx].qs.reduce((s,qi)=>s+(answers[qi]+1),0); } // 4\u201316
+function catPct(catIdx) { return Math.round(((catRaw(catIdx)-4)/12)*100); } // 0\u2013100
+
+function getLevel(ns) {
+  if (ns <= 39) return LEVELS.inicial;
+  if (ns <= 69) return LEVELS.intermedio;
+  return LEVELS.experto;
+}
+
+// \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+// NAVIGATION
+// \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function startDiag() {
+  entName = document.getElementById('inp-name').value.trim() || 'Emprendedor/a';
+  show('s-questions');
+  renderQ(0);
+}
+
+function renderQ(idx) {
+  curQ = idx;
+  const q = QS[idx];
+  const pct = ((idx+1)/20)*100;
+  document.getElementById('q-counter').textContent = `${idx+1} / 20`;
+  document.getElementById('prog-fill').style.width = pct+'%';
+  const pill = document.getElementById('cat-pill');
+  pill.textContent = q.cat;
+  pill.style.background = q.color+'22';
+  pill.style.borderColor = q.color+'44';
+  pill.style.color = q.color;
+
+  document.getElementById('q-area').innerHTML = `
+    <div class="q-card" style="--cat-color:${q.color}">
+      <div class="q-num">Pregunta ${q.id} de 20 \u00B7 ${q.cat}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="options">
+        ${q.opts.map((o,i)=>`
+          <label class="opt ${answers[idx]===i?'sel':''}" onclick="pick(${i})">
+            <input type="radio" name="q" value="${i}">
+            <div class="opt-marker">${String.fromCharCode(65+i)}</div>
+            <div class="opt-text">${o}</div>
+          </label>`).join('')}
+      </div>
+    </div>`;
+
+  document.getElementById('btn-prev').disabled = idx===0;
+  updateBtn();
+}
+
+function pick(i) {
+  answers[curQ] = i;
+  document.querySelectorAll('.opt').forEach((el,j)=>el.classList.toggle('sel',j===i));
+  updateBtn();
+}
+
+function updateBtn() {
+  const btn = document.getElementById('btn-next');
+  btn.disabled = answers[curQ]===null;
+  btn.innerHTML = curQ===19 && answers[curQ]!==null ? '\u{1F3AF} Ver mis resultados' : 'Siguiente \u2192';
+}
+
+function nextQ() {
+  if (answers[curQ]===null) return;
+  if (curQ===19) { buildResults(); show('s-results'); }
+  else { renderQ(curQ+1); window.scrollTo({top:0,behavior:'smooth'}); }
+}
+function prevQ() { if(curQ>0){renderQ(curQ-1);window.scrollTo({top:0,behavior:'smooth'});} }
+function restart() { answers=new Array(20).fill(null); curQ=0; show('s-welcome'); }
+function goBack() {
+  const prev = document.getElementById('s-results').classList.contains('active') ? 's-results' : 's-welcome';
+  show(prev);
+}
+
+// \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+// ACCESO SECRETO AL HISTORIAL (solo para Jorge)
+// Triple-clic en el logo del header \u2192 solicita PIN
+// Cambia ADMIN_PIN para personalizar tu clave
+// \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+const ADMIN_PIN = '1234'; // \u2190 Cambia este PIN por el tuyo
+let brandClickCount = 0, brandClickTimer = null;
+
+document.querySelector('.brand-chip').addEventListener('click', () => {
+  brandClickCount++;
+  clearTimeout(brandClickTimer);
+  brandClickTimer = setTimeout(() => { brandClickCount = 0; }, 800);
+  if (brandClickCount >= 3) {
+    brandClickCount = 0;
+    clearTimeout(brandClickTimer);
+    const pin = prompt('\u{1F510} Acceso al historial \u2014 Ingresa tu PIN:');
+    if (pin === ADMIN_PIN) {
+      openAdmin();
+    } else if (pin !== null) {
+      alert('PIN incorrecto. Si olvidaste tu PIN, b\u00FAscalo en el c\u00F3digo del archivo HTML.');
+    }
+  }
+});
+
+// \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+// BUILD RESULTS
+// \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+function buildResults() {
+  const raw = rawScore();
+  const ns = normScore(raw);
+  const lv = getLevel(ns);
+
+  // Hero
+  document.getElementById('res-hero-img').style.background = lv.heroImg;
+  const heroPhoto = document.getElementById('res-hero-photo');
+  if (lv.heroPhoto) { heroPhoto.src = lv.heroPhoto; heroPhoto.style.display = 'block'; }
+  document.getElementById('res-name').textContent = entName.toUpperCase();
+  document.getElementById('res-level-pill').innerHTML = `<div class="level-pill ${lv.pillClass}">${lv.label} \u00B7 ${lv.range}</div>`;
+  document.getElementById('res-title').textContent = lv.title;
+  document.getElementById('res-score-big').textContent = ns+' pts';
+
+  // Ring
+  const ringEl = document.getElementById('ring-fill');
+  const numEl = document.getElementById('ring-num');
+  const C = 2*Math.PI*66; // \u2248 414.7
+  const ringColor = ns<=39 ? '#ef4444' : ns<=69 ? '#f59e0b' : '#10b981';
+  ringEl.style.stroke = ringColor;
+  document.getElementById('ring-num').style.color = ringColor;
+  numEl.textContent = ns;
+  setTimeout(()=>{ ringEl.style.strokeDasharray = `${C*(ns/100)} ${C}`; }, 250);
+
+  // Score meta
+  document.getElementById('score-meta-title').textContent = lv.title+' \u2014 '+lv.label;
+  document.getElementById('score-meta-desc').textContent = lv.desc;
+
+  // Categories
+  const catScores = CATS.map((c,i) => ({
+    name:c.name, raw:catRaw(i), pct:catPct(i), color:c.color, img:c.img, icon:c.icon
+  }));
+
+  const catGrid = document.getElementById('cat-grid');
+  catGrid.innerHTML = catScores.map(c => {
+    const lvl = c.pct<=39?'Inicial':c.pct<=69?'Intermedio':'Experto';
+    const lvlColor = c.pct<=39?'#ef4444':c.pct<=69?'#f59e0b':'#10b981';
+    return `<div class="cat-card">
+      <div class="cat-bg" style="background:linear-gradient(135deg,${c.color}18 0%,${c.color}08 50%,#0d1526 100%);position:relative;overflow:hidden">
+        ${c.img ? `<img src="${c.img}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.35;display:block" onerror="this.remove()" loading="lazy">` : ''}
+        <div style="position:absolute;inset:0;background-image:radial-gradient(${c.color}15 1px,transparent 1px);background-size:20px 20px"></div>
+        <div style="position:absolute;top:-20px;right:-20px;width:120px;height:120px;background:radial-gradient(circle,${c.color}25 0%,transparent 70%)"></div>
+        <div style="position:absolute;bottom:0;left:0;font-size:3.5rem;opacity:.15;padding:.3rem">${c.icon||'\u25C6'}</div>
+      </div>
+      <div class="cat-img-overlay"></div>
+      <div class="cat-body">
+        <div class="cat-name" style="color:${c.color}">${c.name}</div>
+        <div class="cat-scores-row">
+          <span class="cat-score-val" style="color:${c.color}">${c.raw}/16</span>
+          <span class="cat-score-pct">${c.pct}%</span>
+        </div>
+        <div class="cat-bar-bg"><div class="cat-bar" style="width:0%;background:${c.color}" data-w="${c.pct}"></div></div>
+        <span class="cat-level-tag" style="background:${lvlColor}20;color:${lvlColor}">${lvl}</span>
+      </div>
+    </div>`;
+  }).join('');
+  setTimeout(()=>{
+    document.querySelectorAll('.cat-bar').forEach(b=>{ b.style.width=b.dataset.w+'%'; });
+  },350);
+
+  // Radar
+  drawRadar(catScores);
+
+  // Program
+  document.getElementById('program-section').innerHTML = buildProgram(catScores, lv.id);
+
+  // Recommendations
+  document.getElementById('reco-section').innerHTML = lv.recos.map(r=>`
+    <div class="reco-item">
+      <div class="reco-icon-box" style="background:${r.bg}">${r.icon}</div>
+      <div class="reco-text"><h4>${r.t}</h4><p>${r.d}</p></div>
+    </div>`).join('');
+
+  // Answers
+  document.getElementById('answers-wrap').innerHTML = QS.map((q,i)=>{
+    const a=answers[i], colors=['#ef4444','#f59e0b','#00d4ff','#10b981'];
+    return `<div class="ans-row">
+      <div class="ans-qn">${i+1}</div>
+      <div style="flex:1;color:var(--text-muted);line-height:1.45">
+        <strong style="color:var(--text);font-size:.75rem">${q.q}</strong><br>
+        <span style="font-size:.75rem">${q.opts[a]}</span>
+      </div>
+      <div class="ans-dot" style="background:${colors[a]}"></div>
+    </div>`;
+  }).join('');
+}
+
+// \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+// RADAR CHART
+// \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+function drawRadar(cs) {
+  const canvas = document.getElementById('radar');
+  const ctx = canvas.getContext('2d');
+  const W=canvas.width, H=canvas.height, cx=W/2, cy=H/2+8, R=Math.min(W,H)*.36, N=5;
+  ctx.clearRect(0,0,W,H);
+  const pt=(i,r)=>{ const a=(2*Math.PI*i/N)-Math.PI/2; return{x:cx+r*Math.cos(a),y:cy+r*Math.sin(a)}; };
+  [.25,.5,.75,1].forEach(f=>{
+    ctx.beginPath();
+    for(let i=0;i<N;i++){const p=pt(i,R*f);i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y);}
+    ctx.closePath();
+    ctx.strokeStyle=f===1?'#253a5e':'#1a2845'; ctx.lineWidth=f===1?1.5:1; ctx.stroke();
+    if(f<1){ctx.fillStyle='rgba(0,212,255,.015)';ctx.fill();}
+  });
+  for(let i=0;i<N;i++){
+    const p=pt(i,R);
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(p.x,p.y);
+    ctx.strokeStyle='#1a2845';ctx.lineWidth=1;ctx.stroke();
+  }
+  // data
+  ctx.beginPath();
+  cs.forEach((c,i)=>{ const p=pt(i,R*(c.pct/100)); i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y); });
+  ctx.closePath();
+  ctx.fillStyle='rgba(0,212,255,.1)';ctx.fill();
+  ctx.strokeStyle='#00d4ff';ctx.lineWidth=2;ctx.stroke();
+  cs.forEach((c,i)=>{
+    const p=pt(i,R*(c.pct/100));
+    ctx.beginPath();ctx.arc(p.x,p.y,5,0,2*Math.PI);
+    ctx.fillStyle=c.color;ctx.fill();
+    ctx.strokeStyle='#060b18';ctx.lineWidth=2;ctx.stroke();
+  });
+  // labels
+  cs.forEach((c,i)=>{
+    const p=pt(i,R+30);
+    const words=c.name.split(' ');
+    ctx.font='bold 9.5px Inter,system-ui';ctx.textAlign='center';ctx.fillStyle='#7a93b4';
+    words.forEach((w,wi)=>ctx.fillText(w,p.x,p.y+wi*12-(words.length-1)*5.5));
+  });
+}
+
+// \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+// LOCALSTORAGE
+// \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+const STORE_KEY = 'modo_emp_diagnostics';
+
+function saveDiag() {
+  const raw=rawScore(), ns=normScore(raw), lv=getLevel(ns);
+  const record = {
+    id: Date.now(),
+    name: entName,
+    date: new Date().toLocaleDateString('es-CO',{year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit'}),
+    score: ns,
+    level: lv.title,
+    levelId: lv.id,
+    cats: CATS.map((c,i)=>({name:c.name, raw:catRaw(i), pct:catPct(i)})),
+    answers: [...answers]
+  };
+  const existing = JSON.parse(localStorage.getItem(STORE_KEY)||'[]');
+  existing.push(record);
+  localStorage.setItem(STORE_KEY, JSON.stringify(existing));
+  const status = document.getElementById('save-status');
+  status.textContent = `\u2705 Diagn\u00F3stico de ${entName} guardado correctamente \u00B7 ${record.date}`;
+  setTimeout(()=>status.textContent='',5000);
+}
+
+function exportCSV() {
+  const raw=rawScore(), ns=normScore(raw), lv=getLevel(ns);
+  const catData = CATS.map((c,i)=>catRaw(i)+'/16 ('+catPct(i)+'%)');
+  const headers = ['Nombre','Fecha','Puntuaci\u00F3n (0-100)','Nivel','Ecosistema Digital','Inteligencia Artificial','Marca y Propuesta de Valor','Estrategia Comercial','Mentalidad y Crecimiento'];
+  const row = [entName, new Date().toLocaleDateString('es-CO'), ns, lv.title, ...catData];
+  const csv = [headers.join(','), row.map(v=>`"${v}"`).join(',')].join('\n');
+  downloadText(csv, `diagnostico_${entName.replace(/\s+/g,'_')}_${Date.now()}.csv`, 'text/csv');
+}
+
+function exportAllCSV() {
+  const records = JSON.parse(localStorage.getItem(STORE_KEY)||'[]');
+  if(!records.length){alert('No hay diagn\u00F3sticos guardados todav\u00EDa.');return;}
+  const headers = ['Nombre','Fecha','Puntuaci\u00F3n','Nivel','Ecosistema Digital','Inteligencia Artificial','Marca y Valor','Estrategia Comercial','Mentalidad'];
+  const rows = records.map(r=>[ r.name, r.date, r.score, r.level, ...r.cats.map(c=>c.raw+'/16 ('+c.pct+'%)')]);
+  const csv = [headers, ...rows].map(r=>r.map(v=>`"${v}"`).join(',')).join('\n');
+  downloadText(csv, `historial_diagnosticos_${Date.now()}.csv`, 'text/csv');
+}
+
+function downloadText(content, filename, type) {
+  const blob = new Blob([content],{type});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href=url; a.download=filename; a.click();
+  URL.revokeObjectURL(url);
+}
+
+// \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+
+// ACCORDION
+function toggleMonth(hdr) {
+  var grid = hdr.nextElementSibling;
+  var chev = hdr.querySelector('.month-chevron');
+  var opening = grid.classList.contains('collapsed');
+  grid.classList.toggle('collapsed', !opening);
+  if(chev){ chev.classList.toggle('open', opening); chev.classList.toggle('closed', !opening); }
+}
+
+// ADMIN PANEL
+// \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+function openAdmin() {
+  const records = JSON.parse(localStorage.getItem(STORE_KEY)||'[]');
+  const count = document.getElementById('admin-count');
+  count.textContent = records.length ? `${records.length} diagn\u00F3stico${records.length!==1?'s':''} guardado${records.length!==1?'s':''}` : 'A\u00FAn no hay diagn\u00F3sticos guardados';
+
+  const content = document.getElementById('admin-content');
+  if(!records.length) {
+    content.innerHTML = `<div style="text-align:center;padding:3rem;color:var(--text-muted)">
+      <div style="font-size:3rem;margin-bottom:1rem">\u{1F4ED}</div>
+      <p>A\u00FAn no hay diagn\u00F3sticos guardados. Completa uno y haz clic en "Guardar en historial".</p>
+    </div>`;
+  } else {
+    const levelColor = id => id==='inicial'?'#ef4444':id==='intermedio'?'#f59e0b':'#10b981';
+    content.innerHTML = `<table class="admin-table">
+      <thead><tr>
+        <th>#</th><th>Emprendedor/a</th><th>Fecha</th><th>Puntaje</th><th>Nivel</th>
+        <th>Digital</th><th>IA</th><th>Marca</th><th>Comercial</th><th>Mentalidad</th>
+        <th></th>
+      </tr></thead>
+      <tbody>
+        ${records.slice().reverse().map((r,i)=>`<tr>
+          <td style="color:var(--text-dim)">${records.length-i}</td>
+          <td style="color:var(--text);font-weight:700">${r.name}</td>
+          <td>${r.date}</td>
+          <td><span class="score-pill" style="background:${levelColor(r.levelId)}22;color:${levelColor(r.levelId)}">${r.score}/100</span></td>
+          <td style="color:${levelColor(r.levelId)};font-weight:600">${r.level}</td>
+          ${r.cats.map(c=>`<td>${c.raw}/16<br><span style="font-size:.65rem;color:var(--text-dim)">${c.pct}%</span></td>`).join('')}
+          <td><button class="btn btn-ghost" style="padding:.3rem .7rem;font-size:.72rem" onclick="deleteRecord(${r.id})">\u{1F5D1}\uFE0F</button></td>
+        </tr>`).join('')}
+      </tbody>
+    </table>`;
+  }
+  show('s-admin');
+}
+
+function deleteRecord(id) {
+  if(!confirm('\u00BFEliminar este diagn\u00F3stico del historial?')) return;
+  const records = JSON.parse(localStorage.getItem(STORE_KEY)||'[]').filter(r=>r.id!==id);
+  localStorage.setItem(STORE_KEY, JSON.stringify(records));
+  openAdmin();
+}
+
+// \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+// MODALS
+// \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(m=>{
+  m.addEventListener('click',e=>{ if(e.target===m) m.classList.remove('open'); });
+});
+
+function toggleAnswers() {
+  document.getElementById('answers-wrap').classList.toggle('open');
+}
+</script>
+</body>
+</html>
