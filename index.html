@@ -6,12 +6,12 @@
 <title>Diagn&#243;stico &#183; Modo Emprendedor &#183; Ecosistema IA</title>
 <style>
 :root {
-  --bg: #060b18;
-  --surface: #0d1526;
-  --surface2: #131f35;
-  --surface3: #1a2845;
-  --border: #1e3050;
-  --border2: #253a5e;
+  --bg: #050914;
+  --surface: #0b1220;
+  --surface2: #0f192e;
+  --surface3: #162038;
+  --border: #1a2d4a;
+  --border2: #213554;
   --accent: #00d4ff;
   --accent2: #7c3aed;
   --accent3: #10b981;
@@ -26,13 +26,13 @@
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:'Inter','Segoe UI',system-ui,sans-serif;min-height:100vh;overflow-x:hidden}
+body{background:radial-gradient(ellipse at 15% 15%,#0c0f2e 0%,#050914 35%,#060218 70%,#030818 100%);color:var(--text);font-family:'Inter','Segoe UI',system-ui,sans-serif;min-height:100vh;overflow-x:hidden}
 
 /* NOISE + GRID BG */
 body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(rgba(0,212,255,0.04) 1px,transparent 1px);background-size:32px 32px;pointer-events:none;z-index:0}
 body::after{content:'';position:fixed;top:-200px;right:-200px;width:800px;height:800px;background:radial-gradient(circle,rgba(124,58,237,0.07) 0%,transparent 65%);pointer-events:none;z-index:0}
 .glow-left{position:fixed;bottom:-100px;left:-100px;width:600px;height:600px;background:radial-gradient(circle,rgba(0,212,255,0.05) 0%,transparent 65%);pointer-events:none;z-index:0}
-
+#neural-canvas{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:0.65}
 .wrap{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:2rem 1.25rem 4rem}
 
 /* SCREENS */
@@ -243,6 +243,7 @@ body::after{content:'';position:fixed;top:-200px;right:-200px;width:800px;height
 </style>
 </head>
 <body>
+  <canvas id="neural-canvas"></canvas>
 <div class="glow-left"></div>
 <div class="wrap">
 
@@ -257,7 +258,7 @@ body::after{content:'';position:fixed;top:-200px;right:-200px;width:800px;height
 <!-- &#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552; WELCOME &#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552; -->
 <div class="screen active" id="s-welcome">
   <div class="welcome-hero">
-    <div class="welcome-hero-img" style="background:linear-gradient(135deg,#060b18 0%,#0a1e3d 30%,#12083a 60%,#071826 100%);position:relative;overflow:hidden">
+    <div class="welcome-hero-img" style="background:linear-gradient(135deg,#050914 0%,#0a1e3d 30%,#12083a 60%,#071826 100%);position:relative;overflow:hidden">
     <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=1200&q=75" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.4;display:block" onerror="this.remove()" loading="lazy">
     <div style="position:absolute;inset:0;background-image:radial-gradient(rgba(0,212,255,.08) 1px,transparent 1px);background-size:28px 28px"></div>
     <div style="position:absolute;top:-60px;right:-60px;width:400px;height:400px;background:radial-gradient(circle,rgba(0,212,255,.12) 0%,transparent 65%)"></div>
@@ -314,7 +315,7 @@ body::after{content:'';position:fixed;top:-200px;right:-200px;width:800px;height
 
   <!-- Hero -->
   <div class="res-hero">
-    <div class="res-hero-img" id="res-hero-img" style="background:linear-gradient(135deg,#060b18,#0a1e3d);transition:background 0.5s;position:relative;overflow:hidden">
+    <div class="res-hero-img" id="res-hero-img" style="background:linear-gradient(135deg,#050914,#0a1e3d);transition:background 0.5s;position:relative;overflow:hidden">
     <img id="res-hero-photo" src="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.35;display:none" onerror="this.style.display='none'" loading="lazy">
   </div>
     <div class="res-hero-grad"></div>
@@ -966,7 +967,7 @@ function buildResults() {
     const lvl = c.pct<=39?'Inicial':c.pct<=69?'Intermedio':'Experto';
     const lvlColor = c.pct<=39?'#ef4444':c.pct<=69?'#f59e0b':'#10b981';
     return `<div class="cat-card">
-      <div class="cat-bg" style="background:linear-gradient(135deg,${c.color}18 0%,${c.color}08 50%,#0d1526 100%);position:relative;overflow:hidden">
+      <div class="cat-bg" style="background:linear-gradient(135deg,${c.color}18 0%,${c.color}08 50%,#0b1220 100%);position:relative;overflow:hidden">
         ${c.img ? `<img src="${c.img}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.35;display:block" onerror="this.remove()" loading="lazy">` : ''}
         <div style="position:absolute;inset:0;background-image:radial-gradient(${c.color}15 1px,transparent 1px);background-size:20px 20px"></div>
         <div style="position:absolute;top:-20px;right:-20px;width:120px;height:120px;background:radial-gradient(circle,${c.color}25 0%,transparent 70%)"></div>
@@ -1028,13 +1029,13 @@ function drawRadar(cs) {
     ctx.beginPath();
     for(let i=0;i<N;i++){const p=pt(i,R*f);i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y);}
     ctx.closePath();
-    ctx.strokeStyle=f===1?'#253a5e':'#1a2845'; ctx.lineWidth=f===1?1.5:1; ctx.stroke();
+    ctx.strokeStyle=f===1?'#213554':'#162038'; ctx.lineWidth=f===1?1.5:1; ctx.stroke();
     if(f<1){ctx.fillStyle='rgba(0,212,255,.015)';ctx.fill();}
   });
   for(let i=0;i<N;i++){
     const p=pt(i,R);
     ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(p.x,p.y);
-    ctx.strokeStyle='#1a2845';ctx.lineWidth=1;ctx.stroke();
+    ctx.strokeStyle='#162038';ctx.lineWidth=1;ctx.stroke();
   }
   // data
   ctx.beginPath();
@@ -1046,7 +1047,7 @@ function drawRadar(cs) {
     const p=pt(i,R*(c.pct/100));
     ctx.beginPath();ctx.arc(p.x,p.y,5,0,2*Math.PI);
     ctx.fillStyle=c.color;ctx.fill();
-    ctx.strokeStyle='#060b18';ctx.lineWidth=2;ctx.stroke();
+    ctx.strokeStyle='#050914';ctx.lineWidth=2;ctx.stroke();
   });
   // labels
   cs.forEach((c,i)=>{
